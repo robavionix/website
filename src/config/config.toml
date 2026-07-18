@@ -5,11 +5,11 @@
   tagline          = "See a controller fail. Then fix it."
   taglineSeparator = "" # default is " - "
   baseUrl          = "https://robavionix.pages.dev/" # Base URL for the site and used in OpenGraph meta tags. Update once the custom domain is live.
-  logo             = "/images/logo.svg" # Path to the site's logo
-  logoAlternate    = "" # Path to the site's logo
+  logo             = "/images/logo.svg" # Path to the site's logo (dark-stroke variant, used on light-background headers/footers)
+  logoAlternate    = "/images/logo-alternate.svg" # Light-stroke variant, used on dark-background headers/footers
   logoText         = "Robavionix" # Text displayed next to the logo
-  logoWidth        = "24px" # Width of the logo
-  logoHeight       = "36px" # Height of the logo
+  logoWidth        = "34px" # Width of the logo
+  logoHeight       = "34px" # Height of the logo
 
   # Add a trailing slash at the end of URLs (e.g., https://example.com/, https://example.com/contact/)˝
   # Note: Manually restart your server when you change this value

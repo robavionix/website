@@ -6,10 +6,10 @@
     "taglineSeparator": "",
     "baseUrl": "https://robavionix.pages.dev/",
     "logo": "/images/logo.svg",
-    "logoAlternate": "",
+    "logoAlternate": "/images/logo-alternate.svg",
     "logoText": "Robavionix",
-    "logoWidth": "24px",
-    "logoHeight": "36px",
+    "logoWidth": "34px",
+    "logoHeight": "34px",
     "trailingSlash": true,
     "favicon": {
       "path": "/images/favicons",
