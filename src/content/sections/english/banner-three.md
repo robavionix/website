@@ -16,4 +16,15 @@ buttons:
     url: "/#contact"
     hoverEffect: "magnetic-text-flip"
     variant: "fill-white"
+  - enable: true
+    label: "Pre-order via Revolut"
+    url: "https://revolut.me/tianles68m"
+    hoverEffect: "magnetic-text-flip"
+    variant: "outline"
+    target: "_blank"
+    rel: "noopener noreferrer"
+    icon:
+      enable: true
+      name: "Wallet"
+      position: "left"
 ---
