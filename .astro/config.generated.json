@@ -1,0 +1,131 @@
+{
+  "site": {
+    "title": "Techlo Lite",
+    "description": "Techlo Lite is a free IT solutions and services theme for managed IT services, cloud consulting, cybersecurity, software development, and digital transformation websites.",
+    "tagline": "Free IT Solutions & Services Astro & Tailwind CSS Theme",
+    "taglineSeparator": "",
+    "baseUrl": "https://techlo-lite-astro.pages.dev/",
+    "logo": "/images/logo.svg",
+    "logoAlternate": "",
+    "logoText": "Techlo",
+    "logoWidth": "24px",
+    "logoHeight": "36px",
+    "trailingSlash": true,
+    "favicon": {
+      "path": "/images/favicons",
+      "image": "/images/favicon.png"
+    }
+  },
+  "seo": {
+    "author": "Getastrothemes",
+    "keywords": [
+      "astro technology template",
+      "astro template",
+      "astro theme",
+      "free astro theme",
+      "it solution theme",
+      "technology astro theme"
+    ],
+    "robots": "index, follow",
+    "robotsTxt": {
+      "enable": true,
+      "disallow": []
+    },
+    "sitemap": {
+      "enable": true,
+      "exclude": []
+    }
+  },
+  "settings": {
+    "blogFolder": "blog",
+    "servicesFolder": "services",
+    "blogPagination": 6,
+    "pagination": 8,
+    "stickyHeader": true,
+    "contactFormAction": "https://formsubmit.co/temp.gats@gmail.com",
+    "contactFormProvider": "formsubmit.co",
+    "footerDescription": "",
+    "smoothScroll": {
+      "enable": true,
+      "respectReducedMotion": true,
+      "duration": 1.1,
+      "easing": "expo",
+      "smoothWheel": true,
+      "syncTouch": false,
+      "wheelMultiplier": 1,
+      "touchMultiplier": 1,
+      "anchors": true,
+      "autoRaf": true,
+      "stopInertiaOnNavigate": true
+    },
+    "animation": {
+      "enable": true,
+      "respectReducedMotion": true,
+      "easing": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "duration": "",
+      "distance": "2rem",
+      "blur": "10px",
+      "rootMargin": "0px 0px -8% 0px",
+      "threshold": 0.14
+    },
+    "copyright": {
+      "enable": true,
+      "text": ""
+    },
+    "subscription": {
+      "enable": true,
+      "title": "",
+      "note": "",
+      "formAction": "https://gmail.us11.list-manage.com/subscribe/post?u=d870b06d86c16269e4b1f9b39&amp;id=12cf0c6ac2&amp;f_id=007e61e1f0",
+      "mailchimpTagValue": ""
+    },
+    "multilingual": {
+      "enable": true,
+      "defaultLanguage": "en",
+      "disableLanguages": [
+        ""
+      ],
+      "showDefaultLangInUrl": false
+    },
+    "contactInfo": {
+      "phone": "[518-564-3200](tel:5185643200)",
+      "email": "[hello@example.com](mailto:hello@example.com)",
+      "address": "1791 Yorkshire Circle Kitty <br /> Hawk, NC 279499",
+      "officeHours": "Office Hours: 8:00 AM – 10:00 PM"
+    },
+    "headerOffcanvas": {
+      "enable": true,
+      "logo": "",
+      "description": "",
+      "button": {
+        "enable": true,
+        "label": "",
+        "url": "/#contact"
+      }
+    },
+    "navigationButton": {
+      "enable": true,
+      "label": "",
+      "url": "/#contact"
+    },
+    "markup": {
+      "tableOfContents": {
+        "enable": true,
+        "expanded": false,
+        "endLevel": 5,
+        "ordered": false,
+        "startLevel": 1
+      }
+    }
+  },
+  "opengraph": {
+    "image": "/images/og-image.jpg",
+    "ogLocale": "en_US",
+    "ogType": "website",
+    "twitter": "",
+    "twitterCard": "summary_large_image"
+  },
+  "head": {
+    "content": "  <script></script>\n  "
+  }
+}

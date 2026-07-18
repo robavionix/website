@@ -1,0 +1,1750 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "draft": {
+      "type": "boolean"
+    },
+    "button": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean"
+        },
+        "tag": {
+          "type": "string",
+          "enum": [
+            "a",
+            "button"
+          ]
+        },
+        "url": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "rel": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "object",
+          "properties": {
+            "enable": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "position": {
+              "type": "string",
+              "enum": [
+                "left",
+                "right"
+              ]
+            }
+          },
+          "required": [
+            "enable",
+            "name"
+          ]
+        },
+        "target": {
+          "type": "string"
+        },
+        "hoverEffect": {
+          "type": "string",
+          "enum": [
+            "text-flip",
+            "creative-fill",
+            "magnetic",
+            "magnetic-text-flip"
+          ]
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "fill",
+            "fill-white",
+            "outline",
+            "text",
+            "circle"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "additionalProperties": {}
+    },
+    "metaTitle": {
+      "type": "string"
+    },
+    "metaDescription": {
+      "type": "string"
+    },
+    "robots": {
+      "type": "string"
+    },
+    "excludeFromSitemap": {
+      "type": "boolean"
+    },
+    "excludeFromCollection": {
+      "type": "boolean"
+    },
+    "customSlug": {
+      "type": "string"
+    },
+    "canonical": {
+      "type": "string"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "disableTagline": {
+      "type": "boolean"
+    },
+    "hasFooterDarkBackground": {
+      "type": "boolean"
+    },
+    "servicesSection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "button": {
+          "type": "object",
+          "properties": {
+            "enable": {
+              "type": "boolean"
+            },
+            "tag": {
+              "type": "string",
+              "enum": [
+                "a",
+                "button"
+              ]
+            },
+            "url": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "class": {
+              "type": "string"
+            },
+            "rel": {
+              "type": "string"
+            },
+            "icon": {
+              "type": "object",
+              "properties": {
+                "enable": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                }
+              },
+              "required": [
+                "enable",
+                "name"
+              ]
+            },
+            "target": {
+              "type": "string"
+            },
+            "hoverEffect": {
+              "type": "string",
+              "enum": [
+                "text-flip",
+                "creative-fill",
+                "magnetic",
+                "magnetic-text-flip"
+              ]
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "fill",
+                "fill-white",
+                "outline",
+                "text",
+                "circle"
+              ]
+            }
+          },
+          "required": [
+            "label"
+          ],
+          "additionalProperties": {}
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "layout": {
+              "type": "string",
+              "enum": [
+                "grid",
+                "carousel",
+                "accordion"
+              ]
+            },
+            "appearance": {
+              "type": "string"
+            },
+            "iconPlacement": {
+              "type": "string",
+              "enum": [
+                "top",
+                "right"
+              ]
+            },
+            "column": {
+              "type": "number"
+            },
+            "sectionVerticalSpace": {
+              "default": true,
+              "type": "boolean"
+            },
+            "limit": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean",
+                  "const": false
+                }
+              ]
+            },
+            "marquee": {
+              "type": "object",
+              "properties": {
+                "elementWidth": {
+                  "type": "string"
+                },
+                "elementWidthAuto": {
+                  "type": "boolean"
+                },
+                "elementWidthResponsive": {
+                  "type": "string"
+                },
+                "pauseOnHover": {
+                  "type": "boolean"
+                },
+                "reverse": {
+                  "type": "string",
+                  "enum": [
+                    "reverse",
+                    ""
+                  ]
+                },
+                "duration": {
+                  "type": "string"
+                },
+                "fullWidth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ctaSection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "button": {
+          "type": "object",
+          "properties": {
+            "enable": {
+              "type": "boolean"
+            },
+            "tag": {
+              "type": "string",
+              "enum": [
+                "a",
+                "button"
+              ]
+            },
+            "url": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "class": {
+              "type": "string"
+            },
+            "rel": {
+              "type": "string"
+            },
+            "icon": {
+              "type": "object",
+              "properties": {
+                "enable": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                }
+              },
+              "required": [
+                "enable",
+                "name"
+              ]
+            },
+            "target": {
+              "type": "string"
+            },
+            "hoverEffect": {
+              "type": "string",
+              "enum": [
+                "text-flip",
+                "creative-fill",
+                "magnetic",
+                "magnetic-text-flip"
+              ]
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "fill",
+                "fill-white",
+                "outline",
+                "text",
+                "circle"
+              ]
+            }
+          },
+          "required": [
+            "label"
+          ],
+          "additionalProperties": {}
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "appearance": {
+              "type": "string",
+              "enum": [
+                "dark",
+                "light",
+                "accent"
+              ]
+            },
+            "centeredContent": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "contactSection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "officeHours": {
+          "type": "string"
+        },
+        "formTitle": {
+          "type": "string"
+        },
+        "formDescription": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "imagePosition": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "contactInformation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "button": {
+                "type": "object",
+                "properties": {
+                  "enable": {
+                    "type": "boolean"
+                  },
+                  "tag": {
+                    "type": "string",
+                    "enum": [
+                      "a",
+                      "button"
+                    ]
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "class": {
+                    "type": "string"
+                  },
+                  "rel": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "object",
+                    "properties": {
+                      "enable": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "position": {
+                        "type": "string",
+                        "enum": [
+                          "left",
+                          "right"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "enable",
+                      "name"
+                    ]
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "hoverEffect": {
+                    "type": "string",
+                    "enum": [
+                      "text-flip",
+                      "creative-fill",
+                      "magnetic",
+                      "magnetic-text-flip"
+                    ]
+                  },
+                  "variant": {
+                    "type": "string",
+                    "enum": [
+                      "fill",
+                      "fill-white",
+                      "outline",
+                      "text",
+                      "circle"
+                    ]
+                  }
+                },
+                "required": [
+                  "label"
+                ],
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "title",
+              "icon",
+              "description"
+            ]
+          }
+        },
+        "form": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string"
+            },
+            "emailSubject": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            },
+            "submitButton": {
+              "type": "object",
+              "properties": {
+                "enable": {
+                  "type": "boolean"
+                },
+                "tag": {
+                  "type": "string",
+                  "enum": [
+                    "a",
+                    "button"
+                  ]
+                },
+                "url": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "class": {
+                  "type": "string"
+                },
+                "rel": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "object",
+                  "properties": {
+                    "enable": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "position": {
+                      "type": "string",
+                      "enum": [
+                        "left",
+                        "right"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "enable",
+                    "name"
+                  ]
+                },
+                "target": {
+                  "type": "string"
+                },
+                "hoverEffect": {
+                  "type": "string",
+                  "enum": [
+                    "text-flip",
+                    "creative-fill",
+                    "magnetic",
+                    "magnetic-text-flip"
+                  ]
+                },
+                "variant": {
+                  "type": "string",
+                  "enum": [
+                    "fill",
+                    "fill-white",
+                    "outline",
+                    "text",
+                    "circle"
+                  ]
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": {}
+            },
+            "inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "placeholder": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "halfWidth": {
+                    "type": "boolean"
+                  },
+                  "defaultValue": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "selected": {
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "type": "boolean"
+                  },
+                  "checked": {
+                    "type": "boolean"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "email",
+                      "tel",
+                      "url",
+                      "number",
+                      "date",
+                      "radio",
+                      "checkbox"
+                    ]
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "tag": {
+                    "type": "string",
+                    "const": "textarea"
+                  },
+                  "rows": {
+                    "type": "string"
+                  },
+                  "group": {
+                    "type": "string"
+                  },
+                  "groupLabel": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        },
+                        "required": {
+                          "type": "boolean"
+                        },
+                        "groupLabel": {
+                          "type": "string"
+                        },
+                        "group": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "radio",
+                            "checkbox"
+                          ]
+                        },
+                        "halfWidth": {
+                          "type": "boolean"
+                        },
+                        "defaultValue": {
+                          "type": "string"
+                        },
+                        "checked": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "label"
+                      ]
+                    }
+                  },
+                  "dropdown": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "select",
+                          "search"
+                        ]
+                      },
+                      "search": {
+                        "type": "object",
+                        "properties": {
+                          "placeholder": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string"
+                            },
+                            "selected": {
+                              "type": "boolean"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "value"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "items"
+                    ]
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string",
+                    "enum": [
+                      "info",
+                      "warning",
+                      "success",
+                      "deprecated",
+                      "hint"
+                    ]
+                  },
+                  "parentClass": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "inputs"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "imagePosition",
+        "contactInformation",
+        "form"
+      ]
+    },
+    "contactSectionTwo": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "officeHours": {
+          "type": "string"
+        },
+        "info": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "icon",
+              "description"
+            ]
+          }
+        },
+        "form": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string"
+            },
+            "emailSubject": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            },
+            "submitButton": {
+              "type": "object",
+              "properties": {
+                "enable": {
+                  "type": "boolean"
+                },
+                "tag": {
+                  "type": "string",
+                  "enum": [
+                    "a",
+                    "button"
+                  ]
+                },
+                "url": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "class": {
+                  "type": "string"
+                },
+                "rel": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "object",
+                  "properties": {
+                    "enable": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "position": {
+                      "type": "string",
+                      "enum": [
+                        "left",
+                        "right"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "enable",
+                    "name"
+                  ]
+                },
+                "target": {
+                  "type": "string"
+                },
+                "hoverEffect": {
+                  "type": "string",
+                  "enum": [
+                    "text-flip",
+                    "creative-fill",
+                    "magnetic",
+                    "magnetic-text-flip"
+                  ]
+                },
+                "variant": {
+                  "type": "string",
+                  "enum": [
+                    "fill",
+                    "fill-white",
+                    "outline",
+                    "text",
+                    "circle"
+                  ]
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": {}
+            },
+            "inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "placeholder": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "halfWidth": {
+                    "type": "boolean"
+                  },
+                  "defaultValue": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "selected": {
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "type": "boolean"
+                  },
+                  "checked": {
+                    "type": "boolean"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "email",
+                      "tel",
+                      "url",
+                      "number",
+                      "date",
+                      "radio",
+                      "checkbox"
+                    ]
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "tag": {
+                    "type": "string",
+                    "const": "textarea"
+                  },
+                  "rows": {
+                    "type": "string"
+                  },
+                  "group": {
+                    "type": "string"
+                  },
+                  "groupLabel": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        },
+                        "required": {
+                          "type": "boolean"
+                        },
+                        "groupLabel": {
+                          "type": "string"
+                        },
+                        "group": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "radio",
+                            "checkbox"
+                          ]
+                        },
+                        "halfWidth": {
+                          "type": "boolean"
+                        },
+                        "defaultValue": {
+                          "type": "string"
+                        },
+                        "checked": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "label"
+                      ]
+                    }
+                  },
+                  "dropdown": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "select",
+                          "search"
+                        ]
+                      },
+                      "search": {
+                        "type": "object",
+                        "properties": {
+                          "placeholder": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string"
+                            },
+                            "selected": {
+                              "type": "boolean"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "value"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "items"
+                    ]
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string",
+                    "enum": [
+                      "info",
+                      "warning",
+                      "success",
+                      "deprecated",
+                      "hint"
+                    ]
+                  },
+                  "parentClass": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "submitLabel": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "teamSection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "button": {
+          "type": "object",
+          "properties": {
+            "enable": {
+              "type": "boolean"
+            },
+            "tag": {
+              "type": "string",
+              "enum": [
+                "a",
+                "button"
+              ]
+            },
+            "url": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "class": {
+              "type": "string"
+            },
+            "rel": {
+              "type": "string"
+            },
+            "icon": {
+              "type": "object",
+              "properties": {
+                "enable": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                }
+              },
+              "required": [
+                "enable",
+                "name"
+              ]
+            },
+            "target": {
+              "type": "string"
+            },
+            "hoverEffect": {
+              "type": "string",
+              "enum": [
+                "text-flip",
+                "creative-fill",
+                "magnetic",
+                "magnetic-text-flip"
+              ]
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "fill",
+                "fill-white",
+                "outline",
+                "text",
+                "circle"
+              ]
+            }
+          },
+          "required": [
+            "label"
+          ],
+          "additionalProperties": {}
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean",
+              "const": false
+            }
+          ]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "layout": {
+              "default": "grid",
+              "type": "string",
+              "enum": [
+                "grid",
+                "carousel"
+              ]
+            },
+            "limit": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean",
+                  "const": false
+                }
+              ]
+            },
+            "marquee": {
+              "type": "object",
+              "properties": {
+                "elementWidth": {
+                  "type": "string"
+                },
+                "elementWidthAuto": {
+                  "type": "boolean"
+                },
+                "elementWidthResponsive": {
+                  "type": "string"
+                },
+                "pauseOnHover": {
+                  "type": "boolean"
+                },
+                "reverse": {
+                  "type": "string",
+                  "enum": [
+                    "reverse",
+                    ""
+                  ]
+                },
+                "duration": {
+                  "type": "string"
+                },
+                "fullWidth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "testimonialSection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "imagePosition": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "background": {
+              "type": "boolean"
+            },
+            "layout": {
+              "type": "string",
+              "enum": [
+                "carousel",
+                "grid"
+              ]
+            },
+            "marquee": {
+              "type": "object",
+              "properties": {
+                "elementWidth": {
+                  "type": "string"
+                },
+                "elementWidthAuto": {
+                  "type": "boolean"
+                },
+                "elementWidthResponsive": {
+                  "type": "string"
+                },
+                "pauseOnHover": {
+                  "type": "boolean"
+                },
+                "reverse": {
+                  "type": "string",
+                  "enum": [
+                    "reverse",
+                    ""
+                  ]
+                },
+                "duration": {
+                  "type": "string"
+                },
+                "fullWidth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "enable": {
+                "default": false,
+                "type": "boolean"
+              },
+              "content": {
+                "type": "string"
+              },
+              "customer": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "role"
+                ]
+              }
+            },
+            "required": [
+              "content",
+              "customer"
+            ]
+          }
+        }
+      }
+    },
+    "bannerAgencySection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "mapImage": {
+          "type": "string"
+        },
+        "gradientBackgroundImage": {
+          "type": "string"
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "enable": {
+                "type": "boolean"
+              },
+              "tag": {
+                "type": "string",
+                "enum": [
+                  "a",
+                  "button"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "class": {
+                "type": "string"
+              },
+              "rel": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "object",
+                "properties": {
+                  "enable": {
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right"
+                    ]
+                  }
+                },
+                "required": [
+                  "enable",
+                  "name"
+                ]
+              },
+              "target": {
+                "type": "string"
+              },
+              "hoverEffect": {
+                "type": "string",
+                "enum": [
+                  "text-flip",
+                  "creative-fill",
+                  "magnetic",
+                  "magnetic-text-flip"
+                ]
+              },
+              "variant": {
+                "type": "string",
+                "enum": [
+                  "fill",
+                  "fill-white",
+                  "outline",
+                  "text",
+                  "circle"
+                ]
+              }
+            },
+            "required": [
+              "label"
+            ],
+            "additionalProperties": {}
+          }
+        }
+      }
+    },
+    "workingProcessSection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": false,
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "description",
+              "image"
+            ]
+          }
+        }
+      }
+    },
+    "multipurposeSection": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "default": true,
+          "type": "boolean"
+        },
+        "imagePosition": {
+          "default": "left",
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "images": {
+          "type": "object",
+          "properties": {
+            "large": {
+              "type": "string"
+            },
+            "small": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "large",
+            "small"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "enable": {
+                "type": "boolean"
+              },
+              "tag": {
+                "type": "string",
+                "enum": [
+                  "a",
+                  "button"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "class": {
+                "type": "string"
+              },
+              "rel": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "object",
+                "properties": {
+                  "enable": {
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right"
+                    ]
+                  }
+                },
+                "required": [
+                  "enable",
+                  "name"
+                ]
+              },
+              "target": {
+                "type": "string"
+              },
+              "hoverEffect": {
+                "type": "string",
+                "enum": [
+                  "text-flip",
+                  "creative-fill",
+                  "magnetic",
+                  "magnetic-text-flip"
+                ]
+              },
+              "variant": {
+                "type": "string",
+                "enum": [
+                  "fill",
+                  "fill-white",
+                  "outline",
+                  "text",
+                  "circle"
+                ]
+              }
+            },
+            "required": [
+              "label"
+            ],
+            "additionalProperties": {}
+          }
+        },
+        "extraType": {
+          "default": "none",
+          "type": "string",
+          "enum": [
+            "skills",
+            "list-x",
+            "list-y",
+            "list-inline",
+            "stats",
+            "none"
+          ]
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "label",
+              "value"
+            ]
+          }
+        },
+        "listItems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title"
+            ]
+          }
+        },
+        "stats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "prependValue": {
+                "type": "string"
+              },
+              "appendValue": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "label"
+            ]
+          }
+        }
+      },
+      "required": [
+        "images"
+      ]
+    },
+    "profession": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "social": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "enable": {
+            "type": "boolean"
+          },
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "enable",
+          "label",
+          "icon",
+          "url"
+        ]
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}
