@@ -1,5 +1,5 @@
 ---
 title: ""
-metaDescription: "Build reliable technology with We through expert IT strategy, software engineering, and support."
+metaDescription: "Robavionix is a fault-tolerant flight control HIL teaching platform. Real STM32 hardware, real Simulink models, and a fault-injection switch — design a controller, then watch it fail and recover, live."
 hasFooterDarkBackground: true
 ---
