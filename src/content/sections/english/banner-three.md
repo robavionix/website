@@ -19,8 +19,8 @@ buttons:
   - enable: true
     label: "Pre-order via Revolut"
     url: "https://revolut.me/tianles68m"
-    hoverEffect: "magnetic-text-flip"
-    variant: "outline"
+    hoverEffect: "magnetic"
+    class: "btn-outline-accent"
     target: "_blank"
     rel: "noopener noreferrer"
     icon:

@@ -50,6 +50,14 @@
   @apply text-text-default opacity-30;
 }
 
+/* High-contrast outline for dark/gradient backgrounds (e.g. the homepage hero) */
+@utility btn-outline-accent {
+  @apply text-accent border-2 border-accent bg-transparent transition-colors duration-300;
+}
+.btn-outline-accent:hover {
+  @apply bg-accent text-theme-dark;
+}
+
 .has-icon {
   @apply flex items-center gap-2.5;
   svg {
