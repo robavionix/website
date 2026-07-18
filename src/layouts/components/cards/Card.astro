@@ -31,9 +31,11 @@ const isGrid = options?.layout === "grid";
 const isImageOverlay = options?.layout === "carousel";
 const isButtonEnabled = slugLocale || button?.enable;
 const isIconLeft = icon && isGrid;
-const cursorType = collection === "services" ? "service" : "link";
+const cursorType = collection === "curriculum" ? "service" : "link";
 const cursorLabel =
-  collection === "services" ? t("common.viewService") : t("common.learnMore");
+  collection === "curriculum"
+    ? t("common.viewService")
+    : t("common.learnMore");
 const cursorAttrs = isButtonEnabled
   ? {
       "data-cursor-label": cursorLabel,

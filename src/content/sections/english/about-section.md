@@ -7,11 +7,11 @@ images:
   small: "/images/about-us/about-1-b.jpg"
 
 title: |
-  More than 25+ years we provide IT solutions
+  Built from a PhD in fault-tolerant flight control
 subtitle: |
-  During this time, we have built a reputation for dependable delivery, practical guidance, and long-term client support.
+  Robavionix turns one researcher's LPV/SMC fault-tolerant flight control work into hardware students can actually fail, fix, and learn from.
 description: |
-  We help organizations modernize technology with clear planning, focused delivery, and maintainable systems.
+  Every level in the curriculum runs on real STM32 hardware with a fault-injection switch, so the gap between "reading about robustness" and "measuring it yourself" closes on day one.
 
 # EXTRATYPE OPTIONS: "skills" | "list-x" | "list-y" | "stats" | "none"
 extraType: "none"
@@ -19,8 +19,8 @@ extraType: "none"
 # SHARED BUTTON CONFIGURATION (Applies to all section buttons)
 buttons:
   - enable: true # Boolean: true | false
-    label: "Explore Our Services"
-    url: "/services/"
+    label: "View the Curriculum"
+    url: "/curriculum/"
     tag: "a" # Enum: a | button
     variant: "fill" # Enum: fill | fill-white | outline | text | circle
     hoverEffect: "magnetic-text-flip" # Enum: text-flip | creative-fill | magnetic | magnetic-text-flip

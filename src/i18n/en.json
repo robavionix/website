@@ -3,7 +3,7 @@
     "readMore": "Read More",
     "readBlog": "Read Blog",
     "viewDetails": "View Details",
-    "viewService": "View Service",
+    "viewService": "View Level",
     "readMoreAbout": "Read more about",
     "learnMore": "Learn More",
     "learnMoreAbout": "Learn more about",
@@ -23,14 +23,14 @@
     "openSidebarContent": "Open sidebar content",
     "pagination": "Pagination",
     "playVideo": "Play video",
-    "services": "Services",
+    "curriculum": "Curriculum",
     "starRating": "5 star rating",
     "tabs": "Tabs",
     "toggleNavigation": "Toggle navigation"
   },
   "widgets": {
     "searchTitle": "Search",
-    "postSearchFormPlaceholder": "Search insights, services, or guides...",
+    "postSearchFormPlaceholder": "Search levels, posts, or guides...",
     "searchInputPlaceholder": "Type to search...",
     "categoriesTitle": "Categories",
     "tagsTitle": "Tags",
@@ -55,7 +55,7 @@
     "buttonLabel": "Back to Homepage"
   },
   "headerOffcanvas": {
-    "description": "We help teams modernize infrastructure, secure critical systems, and launch digital products that are easier to scale and maintain.",
+    "description": "A fault-tolerant flight control HIL teaching platform: real STM32 hardware, real Simulink models, and a fault-injection switch so students can watch a controller lose stability and recover.",
     "addressLabel": "Address",
     "contactLabel": "Contact"
   },
@@ -76,11 +76,11 @@
     "searchPlaceholder": "Search..."
   },
   "footer": {
-    "description": "We partner with growing organizations to plan, build, secure, and support reliable technology systems for everyday business operations.",
+    "description": "A fault-tolerant flight control HIL teaching platform, built around one progressive curriculum: PID to sliding mode control, quadrotor to fixed-wing.",
     "quickLinksTitle": "Quick Links",
-    "servicesTitle": "Services",
+    "servicesTitle": "Curriculum",
     "informationTitle": "Information",
-    "copyright": "Copyright © 2026 Your Company. All rights reserved.",
+    "copyright": "Copyright © 2026 Robavionix. All rights reserved.",
     "_comment": "Footer text matches the default footer design. Update this value if the product copyright changes."
   }
 }

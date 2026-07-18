@@ -4,7 +4,9 @@ metaDescription: "Review the terms that apply when visitors use this website, co
 draft: false
 ---
 
-**Effective Date:** July, 2022
+**Effective Date:** [TODO: set launch date]
+
+<!-- TODO before launch: have these terms reviewed by a solicitor. -->
 
 By accessing or using this website, you agree to comply with and be bound by the following Terms and Conditions ("Terms"). If you do not agree with these Terms, please do not use this website.
 
@@ -51,7 +53,7 @@ Our Website may contain links to third-party websites. We are not responsible fo
 
 ## Governing Law
 
-These Terms are governed by and construed in accordance with the laws of the State of Imaginary, USA, without regard to its conflict of law principles. Any disputes arising under these Terms shall be resolved in the courts located in Imaginary City, USA.
+These Terms are governed by and construed in accordance with the laws of England and Wales, without regard to its conflict of law principles. Any disputes arising under these Terms shall be resolved in the courts of England and Wales. [TODO: confirm jurisdiction once the company's registered address is finalized.]
 
 ## Changes to Terms
 

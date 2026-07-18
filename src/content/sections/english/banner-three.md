@@ -1,19 +1,19 @@
 ---
 enable: true
-title: "We provide best tech solutions for your business"
-description: "We are architects of innovation, trailblazers of technological advancement, and partners in your success. As a dynamic and forward-thinking organization"
+title: "See a controller fail.<br/>Then fix it."
+description: "Robavionix is a fault-tolerant flight control HIL teaching platform. Real STM32 hardware, real Simulink models, and a fault-injection switch — so students design a controller, then watch it lose stability and recover, live."
 mapImage: "/images/banner/map.svg"
 gradientBackgroundImage: "/images/banner/home-three-gradient-bg.svg"
 
 buttons:
   - enable: true
-    label: "Work With Us"
-    url: "/#contact"
+    label: "View the Curriculum"
+    url: "/curriculum/"
     hoverEffect: "magnetic-text-flip"
     variant: "fill"
   - enable: true
-    label: "View Services"
-    url: "/services/"
+    label: "Get in Touch"
+    url: "/#contact"
     hoverEffect: "magnetic-text-flip"
     variant: "fill-white"
 ---

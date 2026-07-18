@@ -7,20 +7,20 @@ images:
   small: "/images/skill/skill-2.jpg"
 
 title: |
-  We provide perfect IT solutions & technology
+  Not a simulation-only toy. Real hardware, real faults
 subtitle: |
-  Our team helps startups move from idea to launch with reliable systems, clear priorities, and practical technical support.
+  Every controller you design gets flashed to an STM32 board and exercised against a physical testbed inside a HIL rig — with a fault-injection switch built into the hardware, not bolted on afterward.
 description: |
-  We plan, design, build, and optimize digital products that are easy for teams to manage and ready for future growth.
+  From transfer functions to Lyapunov-based robustness, each level closes with the same question: inject a standard fault and measure exactly where the controller stops holding.
 
 # EXTRATYPE OPTIONS: "skills" | "list-x" | "list-y" | "stats" | "none"
 extraType: "list-x"
 
 # SHARED BUTTON CONFIGURATION (Applies to all section buttons)
 buttons:
-  - enable: false # Boolean: true | false
-    label: "Explore Our Services"
-    url: "/services/"
+  - enable: true # Boolean: true | false
+    label: "View the Curriculum"
+    url: "/curriculum/"
     tag: "a" # Enum: a | button
     variant: "fill" # Enum: fill | fill-white | outline | text | circle
     hoverEffect: "magnetic-text-flip" # Enum: text-flip | creative-fill | magnetic | magnetic-text-flip
@@ -33,8 +33,8 @@ buttons:
     class: "" # String: Additional button Tailwind classes
 
 listItems:
-  - title: "Provide Skills<br />Services"
-    icon: "Settings"
-  - title: "Urgent Support<br />For Clients"
-    icon: "Headphones"
+  - title: "Hardware-in-the-<br />Loop, not pure sim"
+    icon: "Cpu"
+  - title: "Fault injection<br />built into the rig"
+    icon: "Zap"
 ---

@@ -1,5 +1,5 @@
 ---
-enable: true # Control the visibility of this section across all pages where it is used
+enable: false # Disabled: no seed-cohort quotes exist yet. Re-enable once real course-leader feedback is collected (see time-capitalization plan, "seed course" milestone).
 title: "Don't take our word, see what our customers say"
 
 image: "/images/testimonial/main.jpg"

@@ -1,0 +1,34 @@
+---
+title: "L1 — Classical PID"
+description: "Build the flight-control intuition: design and tune a cascaded PID attitude controller, then watch it hold together as motor thrust degrades."
+date: 2026-01-01
+icon: "Gauge"
+level: 1
+platform: "quadrotor"
+targetStage: "Undergraduate, year 2-3"
+mathPrereq: "Transfer functions, frequency response"
+tier: "core"
+experiments:
+  - title: "Meet your airframe"
+    description: "Build physical intuition for how four motors and a rigid body combine to produce thrust and moment. Nudge the plant open-loop and watch it drift."
+  - title: "Rate-loop tuning"
+    description: "Design the inner angular-rate PID. Feel bandwidth, overshoot, and steady-state error as flight-relevant vocabulary, not textbook abstractions."
+  - title: "Cascaded rate + attitude loops"
+    description: "Add the outer attitude loop. Apply the 1/5-1/10 bandwidth-separation rule of thumb and fix integral windup by hand after deliberately saturating it."
+  - title: "First fault injection"
+    description: "Inject 60% single-motor thrust loss and IMU noise burst live. Record exactly how far PID can stretch before it loses stability — and where L3/L5 pick up the slack."
+---
+
+Every controller level in Robavionix runs on the same standard fault library, injected live through the same STM32 hardware. L1 is where that story starts: a classical cascaded PID attitude controller, tuned by hand, pushed until it breaks.
+
+## Why start here
+
+Most control-education failures aren't about content depth — they're about students crossing a math threshold without ever touching hardware. L1 assumes only transfer functions and frequency response. No state space, no Lyapunov functions. The goal is a working controller on real motors inside the first lab session, and a precise, felt answer to the question: **how far can a PID controller be pushed before it gives up?**
+
+## What you build
+
+A rate-loop PID on each axis, then an outer attitude loop cascaded on top, deployed to the STM32 flight controller board and exercised against the physical quadrotor testbed inside the HIL rig — not a pure simulation.
+
+## The fault story
+
+Every experiment in this level ends the same way: inject a standard fault (motor thrust degraded to 60%, then an IMU noise burst) and record what happens. The point isn't to make PID fail dramatically — it's to give students a **precise, hands-on baseline** for the phrase "robustness margin," so that when L3 introduces sliding mode control against the same fault, the improvement is something they measured themselves, not something a lecture slide told them was true.

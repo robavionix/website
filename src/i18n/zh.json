@@ -1,0 +1,86 @@
+{
+  "common": {
+    "readMore": "阅读更多",
+    "readBlog": "阅读博客",
+    "viewDetails": "查看详情",
+    "viewService": "查看该级课程",
+    "readMoreAbout": "了解更多关于",
+    "learnMore": "了解更多",
+    "learnMoreAbout": "了解更多关于",
+    "emailPlaceholder": "邮箱地址",
+    "paginationPrevious": "上一页",
+    "paginationNext": "下一页",
+    "home": "首页",
+    "tab": "标签页"
+  },
+  "aria": {
+    "breadcrumb": "面包屑导航",
+    "closeModal": "关闭弹窗",
+    "closeOffcanvas": "关闭侧边栏",
+    "footer": "页脚",
+    "menu": "菜单",
+    "offcanvas": "侧边栏面板",
+    "openSidebarContent": "打开侧边栏内容",
+    "pagination": "分页",
+    "playVideo": "播放视频",
+    "curriculum": "课程体系",
+    "starRating": "5 星评分",
+    "tabs": "标签页",
+    "toggleNavigation": "切换导航"
+  },
+  "widgets": {
+    "searchTitle": "搜索",
+    "postSearchFormPlaceholder": "搜索课程、文章或指南...",
+    "searchInputPlaceholder": "输入以搜索...",
+    "categoriesTitle": "分类",
+    "tagsTitle": "标签",
+    "recentPostsTitle": "最新文章"
+  },
+  "form": {
+    "choose": "请选择",
+    "fallbackLabel": "请设置 label",
+    "fallbackName": "请设置 name 值",
+    "fallbackPlaceholder": "请设置 placeholder",
+    "invalidSelect": "请选择一个有效选项。",
+    "sendMessage": "发送消息",
+    "validSelect": "完美!",
+    "submitting": "表单提交中...",
+    "unknownProvider": "未知的表单服务商。",
+    "submissionFallback": "请使用已配置的联系邮箱提交问题。"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "heading": "哎呀,这个页面不存在",
+    "description": "你要找的页面无法找到。请检查网址是否正确,或返回首页。",
+    "buttonLabel": "返回首页"
+  },
+  "headerOffcanvas": {
+    "description": "一个容错飞控 HIL 教学平台:真实的 STM32 硬件,真实的 Simulink 模型,一个故障注入开关,让学生亲眼看着控制器失稳又恢复。",
+    "addressLabel": "地址",
+    "contactLabel": "联系方式"
+  },
+  "blog": {
+    "authorPrefix": "作者",
+    "category": "分类",
+    "tagsLabel": "标签:",
+    "share": "分享:",
+    "paginationPrevious": "上一篇",
+    "paginationNext": "下一篇"
+  },
+  "navigation": {
+    "buttonLabel": "联系我们"
+  },
+  "select": {
+    "loading": "加载中...",
+    "noResults": "未找到结果",
+    "searchPlaceholder": "搜索..."
+  },
+  "footer": {
+    "description": "一个容错飞控 HIL 教学平台,围绕同一条递进课程主线搭建:从 PID 到滑模控制,从四轴无人机到固定翼。",
+    "quickLinksTitle": "快速链接",
+    "servicesTitle": "课程体系",
+    "informationTitle": "更多信息",
+    "copyright": "Copyright © 2026 Robavionix. All rights reserved.",
+    "_comment": "页脚文案匹配默认页脚设计。如产品版权信息变化请更新此值。"
+  }
+}

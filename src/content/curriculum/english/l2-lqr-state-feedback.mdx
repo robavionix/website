@@ -1,0 +1,30 @@
+---
+title: "L2 — LQR & State Feedback"
+description: "Cross into state-space control. Design an LQR regulator, meet the fixed-wing platform for the first time, and estimate the states you can't measure directly."
+date: 2026-01-02
+icon: "Boxes"
+level: 2
+platform: "both"
+targetStage: "Undergraduate year 3 / MSc entry"
+mathPrereq: "State-space representation, linear algebra"
+tier: "core"
+experiments:
+  - title: "State-space modelling"
+    description: "Rebuild the linearised quadrotor model in state-space form and build physical intuition for which states are directly actuated and which are coupled."
+  - title: "LQR design"
+    description: "Tune the Q/R weighting matrices and feel the state-error-vs-control-effort trade-off directly, compared side by side against L1's PID on the same fault set."
+  - title: "Meet the fixed-wing platform"
+    description: "Trim, longitudinal dynamics, and coupled roll-yaw for the first time. Design an LQR longitudinal controller for FT-1, the second airframe that runs alongside the quadrotor from here on."
+  - title: "State estimation"
+    description: "Introduce an observer (Luenberger-style) for states you can't measure directly — the same residual-generation idea that becomes fault detection in L5."
+---
+
+L2 is the deliberate bridge between PID and the more general control theory that follows. It exists for two reasons: it's the natural jump from transfer functions to state-space representation, and it's where the second airframe — a fixed-wing platform — enters the curriculum.
+
+## Two controllers, one theory
+
+Students design the same LQR framework for both the quadrotor (hover-centric, symmetric) and FT-1, the fixed-wing testbed (trim-centric, longitudinal/lateral-directional split). Seeing one control theory applied to two physically different vehicles is worth more than any amount of correct answers memorised in isolation.
+
+## Where the fault story goes next
+
+The same standard fault library returns — motor thrust loss, sensor noise — but now the discussion is different: LQR's multi-loop tuning can outperform PID on the primary axis while quietly degrading performance on cross-axes the single-loop PID never touched. That model-dependence is exactly the weakness L3's sliding mode control is built to answer.

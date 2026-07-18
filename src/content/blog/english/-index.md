@@ -1,7 +1,7 @@
 ---
 title: "Blog"
 image: "/images/blog/blog-header.png"
-metaDescription: "Read practical articles on software delivery, cloud operations, cybersecurity, automation, and digital strategy."
+metaDescription: "Notes on fault-tolerant flight control, building the Robavionix HIL platform in public, and the engineering behind the curriculum."
 draft: false
 
 # Settings of blog list page layout

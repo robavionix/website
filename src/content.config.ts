@@ -50,12 +50,27 @@ const pagesCollection = defineCollection({
   schema: page,
 });
 
-// Service collection schema
-const serviceCollection = defineCollection({
+// Curriculum collection schema (L1-L5 progressive controller levels; the
+// underlying loader still uses the "services"-style `servicesFolder` config
+// hook, repointed at ./src/content/curriculum)
+const curriculumCollection = defineCollection({
   loader: contentLoader(`./src/content/${servicesFolder}`),
   schema: page.extend({
     icon: z.string().optional(),
     servicesSection: sectionsSchema.servicesSection.optional(),
+    level: z.number().int().min(1).max(5).optional(),
+    platform: z.enum(["quadrotor", "fixed-wing", "both"]).optional(),
+    targetStage: z.string().optional(), // e.g. "Undergraduate Year 2", "MSc"
+    mathPrereq: z.string().optional(),
+    tier: z.enum(["core", "pro", "classroom"]).optional(),
+    experiments: z
+      .array(
+        z.object({
+          title: z.string(),
+          description: z.string().optional(),
+        }),
+      )
+      .optional(),
   }),
 });
 
@@ -106,8 +121,8 @@ export const collections = {
   [blogFolder]: blogCollection,
   blog: blogCollection,
 
-  [servicesFolder]: serviceCollection,
-  services: serviceCollection,
+  [servicesFolder]: curriculumCollection,
+  curriculum: curriculumCollection,
 
   pages: pagesCollection,
   sections: defineCollection({

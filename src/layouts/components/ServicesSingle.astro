@@ -10,7 +10,7 @@ import OptimizedImage from "./utilities/OptimizedImage.astro";
 import CallToActionWidget from "./widgets/CallToActionWidget.astro";
 
 interface Props {
-  content: CollectionEntry<"services">;
+  content: CollectionEntry<"curriculum">;
 }
 
 const { content } = Astro.props;
@@ -18,7 +18,7 @@ const {
   data: { title, image },
 } = content;
 
-const services = await getCollectionCTM("services", Astro.currentLocale);
+const services = await getCollectionCTM("curriculum", Astro.currentLocale);
 const { Content } = await render(content);
 const t = await useTranslations(Astro.currentLocale as string);
 ---
@@ -51,7 +51,7 @@ const t = await useTranslations(Astro.currentLocale as string);
 
       <aside class="lg:col-span-4">
         <div class="sticky-sidebar space-y-9 lg:sticky">
-          <nav aria-label={t("aria.services")}>
+          <nav aria-label={t("aria.curriculum")}>
             <ul class="space-y-2.5">
               {
                 services.map((service) => {
@@ -65,7 +65,7 @@ const t = await useTranslations(Astro.currentLocale as string);
                         href={getLocaleUrlCTM(
                           extractSlug(service),
                           Astro.currentLocale,
-                          "services",
+                          "curriculum",
                         )}
                         aria-current={isActive ? "page" : undefined}
                         class:list={[

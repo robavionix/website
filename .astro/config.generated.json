@@ -1,13 +1,13 @@
 {
   "site": {
-    "title": "Techlo Lite",
-    "description": "Techlo Lite is a free IT solutions and services theme for managed IT services, cloud consulting, cybersecurity, software development, and digital transformation websites.",
-    "tagline": "Free IT Solutions & Services Astro & Tailwind CSS Theme",
+    "title": "Robavionix",
+    "description": "Robavionix is a fault-tolerant flight control HIL teaching platform. Learn PID, LQR, sliding mode control, gain scheduling, and active fault tolerance on real STM32 + Simulink hardware, from quadrotor to fixed-wing.",
+    "tagline": "See a controller fail. Then fix it.",
     "taglineSeparator": "",
-    "baseUrl": "https://techlo-lite-astro.pages.dev/",
+    "baseUrl": "https://robavionix.pages.dev/",
     "logo": "/images/logo.svg",
     "logoAlternate": "",
-    "logoText": "Techlo",
+    "logoText": "Robavionix",
     "logoWidth": "24px",
     "logoHeight": "36px",
     "trailingSlash": true,
@@ -17,14 +17,14 @@
     }
   },
   "seo": {
-    "author": "Getastrothemes",
+    "author": "Robavionix",
     "keywords": [
-      "astro technology template",
-      "astro template",
-      "astro theme",
-      "free astro theme",
-      "it solution theme",
-      "technology astro theme"
+      "fault-tolerant flight control",
+      "hardware-in-the-loop teaching platform",
+      "sliding mode control",
+      "PID to SMC",
+      "flight control education kit",
+      "Simulink STM32 HIL"
     ],
     "robots": "index, follow",
     "robotsTxt": {
@@ -38,11 +38,11 @@
   },
   "settings": {
     "blogFolder": "blog",
-    "servicesFolder": "services",
+    "servicesFolder": "curriculum",
     "blogPagination": 6,
     "pagination": 8,
     "stickyHeader": true,
-    "contactFormAction": "https://formsubmit.co/temp.gats@gmail.com",
+    "contactFormAction": "https://formsubmit.co/hello@robavionix.com",
     "contactFormProvider": "formsubmit.co",
     "footerDescription": "",
     "smoothScroll": {
@@ -88,10 +88,10 @@
       "showDefaultLangInUrl": false
     },
     "contactInfo": {
-      "phone": "[518-564-3200](tel:5185643200)",
-      "email": "[hello@example.com](mailto:hello@example.com)",
-      "address": "1791 Yorkshire Circle Kitty <br /> Hawk, NC 279499",
-      "officeHours": "Office Hours: 8:00 AM – 10:00 PM"
+      "email": "[hello@robavionix.com](mailto:hello@robavionix.com)",
+      "phone": "",
+      "address": "",
+      "officeHours": "Usually replies within 2 business days"
     },
     "headerOffcanvas": {
       "enable": true,

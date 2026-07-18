@@ -1,13 +1,13 @@
 # Site Configuration
 [site]
-  title            = "Techlo Lite" # Shared title for SEO and OpenGraph
-  description      = "Techlo Lite is a free IT solutions and services theme for managed IT services, cloud consulting, cybersecurity, software development, and digital transformation websites." # Shared description for SEO and OpenGraph
-  tagline          = "Free IT Solutions & Services Astro & Tailwind CSS Theme"
-  taglineSeparator = "" # default is " - " 
-  baseUrl          = "https://techlo-lite-astro.pages.dev/" # Base URL for the site and used in OpenGraph meta tags.
+  title            = "Robavionix" # Shared title for SEO and OpenGraph
+  description      = "Robavionix is a fault-tolerant flight control HIL teaching platform. Learn PID, LQR, sliding mode control, gain scheduling, and active fault tolerance on real STM32 + Simulink hardware, from quadrotor to fixed-wing." # Shared description for SEO and OpenGraph
+  tagline          = "See a controller fail. Then fix it."
+  taglineSeparator = "" # default is " - "
+  baseUrl          = "https://robavionix.pages.dev/" # Base URL for the site and used in OpenGraph meta tags. Update once the custom domain is live.
   logo             = "/images/logo.svg" # Path to the site's logo
   logoAlternate    = "" # Path to the site's logo
-  logoText         = "Techlo" # Text displayed next to the logo
+  logoText         = "Robavionix" # Text displayed next to the logo
   logoWidth        = "24px" # Width of the logo
   logoHeight       = "36px" # Height of the logo
 
@@ -25,14 +25,14 @@
 # Specific SEO configurations that complement the general site settings.
 # -----------------------------------------------------------------------------------------------------------------------------------
 [seo]
-  author = "Getastrothemes"
+  author = "Robavionix"
   keywords = [
-    "astro technology template",
-    "astro template",
-    "astro theme",
-    "free astro theme",
-    "it solution theme",
-    "technology astro theme",
+    "fault-tolerant flight control",
+    "hardware-in-the-loop teaching platform",
+    "sliding mode control",
+    "PID to SMC",
+    "flight control education kit",
+    "Simulink STM32 HIL",
   ]
   robots = "index, follow" # Instructs search engines on how to crawl and index the pages.
 
@@ -53,7 +53,7 @@
   # - "src/[...lang]/pages" folder
   # - "src/content.config.ts" collection object
   blogFolder     = "blog" # Folder where blog posts are stored
-  servicesFolder = "services" # Folder where services are stored
+  servicesFolder = "curriculum" # Folder backing the services-style collection; repurposed here for the L1-L5 curriculum levels (routes live at /curriculum/)
 
   blogPagination = 6 # Number of posts displayed on each blog list page
   pagination     = 8 # Number of items displayed on non-blog paginated list pages
@@ -61,7 +61,8 @@
 
   # docs - https://formspree.io/ | https://formsubmit.co/ | https://docs.netlify.com/forms/setup/
   # Form action URL for the contact form (For more settings related to form see "src/content/sections/contact-section.md")
-  contactFormAction = "https://formsubmit.co/temp.gats@gmail.com" # https://formspree.io/f/kweoweo | https://formsubmit.co/your@email.com | "/"
+  # TODO: point this at your real inbox before launch.
+  contactFormAction = "https://formsubmit.co/hello@robavionix.com" # https://formspree.io/f/kweoweo | https://formsubmit.co/your@email.com | "/"
   # formspree | formsubmit.co | netlify (default is formsubmit.co)
   contactFormProvider = "formsubmit.co"
 
@@ -115,14 +116,15 @@
     enable               = true
     defaultLanguage      = "en"
     disableLanguages     = [""] # List of languages to disable (eg: ["fr", "es"])
-    showDefaultLangInUrl = false # Show default language in URL (eg: https://getastrothemes.com/en/)
+    showDefaultLangInUrl = false # Show default language in URL (eg: https://robavionix.com/en/)
 
   # Global Contact Information
+  # TODO: replace with your real inbox/phone/address before launch.
   [settings.contactInfo]
-    phone       = "[518-564-3200](tel:5185643200)"
-    email       = "[hello@example.com](mailto:hello@example.com)"
-    address     = "1791 Yorkshire Circle Kitty <br /> Hawk, NC 279499"
-    officeHours = "Office Hours: 8:00 AM – 10:00 PM"
+    email       = "[hello@robavionix.com](mailto:hello@robavionix.com)"
+    phone       = ""
+    address     = ""
+    officeHours = "Usually replies within 2 business days"
 
   # Header Offcanvas Configuration
   # Update social links in `src/config/social.json`

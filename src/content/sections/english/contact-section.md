@@ -1,13 +1,13 @@
 ---
 enable: true # Control the visibility of this section across all pages where it is used
-title: "Have Any Project on Your Mind?"
-description: "Great! We're excited to hear from you and let's start something"
-officeHours: "Office Hours: Mon - Sat: 8:00 AM - 10:00 PM" # Optional; remove or set empty to hide this row.
+title: "Have a course in mind?"
+description: "Tell us about your cohort and timeline, and we'll help you pick the right tier — or just answer your questions about the curriculum."
+officeHours: "Usually replies within 2 business days" # Optional; remove or set empty to hide this row.
 
 # Check config.toml file for form action related settings
 # this is also used in the footer of the personal portfolio homepage
-formTitle: "Fill The Contact Form"
-formDescription: "Tell us what you need and our team will reply with useful next steps."
+formTitle: "Fill the contact form"
+formDescription: "Tell us what you need and we'll reply with useful next steps."
 
 form:
   emailSubject: "New form submission from your website" # Customized email subject (applicable when anyone submit form, form submission may receive by email depend on provider)
@@ -36,46 +36,43 @@ form:
       type: "email"
       required: true
       halfWidth: true
-    - label: "Estimated budget"
-      name: "Budget"
-      placeholder: "Estimated budget"
-      type: "number"
+    - label: "Institution / department"
+      name: "Institution"
+      placeholder: "University or organization"
       halfWidth: true
-    - label: "Preferred start date"
+    - label: "Target term"
       name: "Start Date"
-      placeholder: "Preferred start date"
+      placeholder: "Target term"
       type: "date"
       halfWidth: true
-    - label: "Service interest"
-      name: "Service"
-      placeholder: "Select a service"
+    - label: "Which tier are you interested in?"
+      name: "Tier"
+      placeholder: "Select a tier"
       required: true
       dropdown:
         type: "search"
         search:
-          placeholder: "Search service"
+          placeholder: "Search tier"
         items:
-          - label: "Web & Mobile App Development"
-            value: "Web & Mobile App Development"
-          - label: "Cloud Infrastructure"
-            value: "Cloud Infrastructure"
-          - label: "Cybersecurity Review"
-            value: "Cybersecurity Review"
-          - label: "Data Tracking & Analytics"
-            value: "Data Tracking & Analytics"
-          - label: "Automation Workflow"
-            value: "Automation Workflow"
-    - label: "New project"
+          - label: "Core (£179, individual)"
+            value: "Core"
+          - label: "Pro (£299, individual)"
+            value: "Pro"
+          - label: "Classroom (£2,499, 10 sets)"
+            value: "Classroom"
+          - label: "Not sure yet"
+            value: "Not sure yet"
+    - label: "Individual purchase"
       name: "Project Type"
-      value: "New project"
+      value: "Individual purchase"
       type: "radio"
       group: "Project Type"
-      groupLabel: "Project type"
+      groupLabel: "Purchase type"
       checked: true
       halfWidth: true
-    - label: "Improve existing system"
+    - label: "Institutional / department purchase"
       name: "Project Type"
-      value: "Improve existing system"
+      value: "Institutional purchase"
       type: "radio"
       group: "Project Type"
       halfWidth: true

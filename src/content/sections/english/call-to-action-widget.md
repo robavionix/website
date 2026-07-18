@@ -4,8 +4,8 @@
 # `contact` feeds `src/layouts/components/widgets/ServicesSingleCta.astro`.
 contact:
   icon: "Headset"
-  title: "Don't hesitate to contact us"
-  description: "At our IT solution company, we are committed to exceptional service and reliable support."
+  title: "Questions about this level?"
+  description: "Not sure which tier covers this level, or how it fits your syllabus? Just ask."
   button:
     # Refer to the `sharedButton` schema in `src/sections.schema.ts` for all available configuration options
     enable: true

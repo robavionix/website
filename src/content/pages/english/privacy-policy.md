@@ -4,7 +4,9 @@ metaDescription: "Understand how personal information submitted through this web
 draft: false
 ---
 
-**Effective Date: July, 2022**
+**Effective Date: [TODO: set launch date]**
+
+<!-- TODO before launch: have this policy reviewed by a solicitor for UK GDPR compliance. -->
 
 Your privacy is important to us, and we are committed to protecting the personal information you share with us. This Privacy Policy explains how we collect, use, and safeguard your information when you visit this website.
 

@@ -1,0 +1,34 @@
+---
+title: "L5 — LPV-SMC & Active Fault Tolerance"
+description: "The platform's signature level: close the loop on fault detection, isolation, and active reconfiguration, combining every tool from L1-L4 into one working fault-tolerant flight controller."
+date: 2026-01-05
+icon: "ShieldCheck"
+level: 5
+platform: "both"
+targetStage: "MSc capstone / PhD / research training"
+mathPrereq: "Everything from L1-L4, combined"
+tier: "pro"
+experiments:
+  - title: "Fault detection & isolation (FDI)"
+    description: "Build a residual generator from the L2 observer, design the detection threshold as a genuine trade-off between false alarms and missed detections using ROC-style analysis, and benchmark detection delay and accuracy against the full standard fault library."
+  - title: "Passive vs. active fault tolerance"
+    description: "Compare L3's sliding-mode controller — passive, no detection, pure robustness — head to head against an FDI-plus-reconfiguration active strategy on the same faults. The trade-off is real: passive is simple and conservative, active is higher-performing but exposed to detection delay and misclassification risk."
+  - title: "LPV-SMC fault-tolerant controller"
+    description: "Fold fault severity itself into the LPV scheduling parameter. FDI's health-estimate output retunes controller gain in real time; sliding mode absorbs whatever uncertainty hasn't yet been identified. This is the platform's own PhD-derived method, not a textbook recipe."
+  - title: "Single-motor loss, in flight"
+    description: "Complete loss of one motor on the quadrotor mid-manoeuvre. Students design the control-allocation matrix reconfiguration by hand and watch four-rotor attitude authority degrade into a controllable, if reduced, three-motor mode."
+  - title: "Control allocation on the fixed-wing"
+    description: "Independent left/right elevons plus differential-thrust redundancy on FT-1. Weighted control allocation redistributes authority when an elevon actuator jams — the optional deep-dive extension for this level."
+  - title: "Capstone: randomized fault mission"
+    description: "One flight mission, 2-3 randomized faults (type, timing, severity) injected mid-run. Students' complete FDI-plus-reconfiguration stack is scored automatically against mission completion. This doubles as the platform's course-competition format."
+---
+
+L5 is where the platform stops teaching individual tools and starts teaching the thing they were always for: a complete, working fault-tolerant flight control loop. It is also the level that comes directly out of the founder's own PhD research on LPV/SMC fault-tolerant flight control — the one piece of this curriculum that a generic controls textbook, and every other teaching platform on the market, simply doesn't have.
+
+## The core engineering trade-off, made visible
+
+Passive fault tolerance (a robust controller that never looks for faults) and active fault tolerance (detect, then reconfigure) are usually presented as a settled question. L5 doesn't settle it — it has students run both against the same faults and let the data make the argument: passive is conservative but simple and detection-delay-free; active can perform better but is exposed to false alarms and missed detections. There is no universally correct answer, and the experiment is built so students discover that themselves.
+
+## The capstone
+
+Every tool accumulated since L1 — cascaded loops, state-space design, Lyapunov-based robustness, LMI-guaranteed scheduling — converges here into one controller that has to survive a mission it hasn't seen the fault schedule for in advance. It is, deliberately, shaped like a course competition, and it is the platform's answer to the question every fault-tolerant-control research group eventually asks a new student: **now put it all together.**

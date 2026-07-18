@@ -1,0 +1,30 @@
+---
+title: "L4 — Gain Scheduling to LPV"
+description: "Discover why a single fixed controller isn't enough across the flight envelope, then replace hand-tuned gain scheduling with a formally-guaranteed LPV controller."
+date: 2026-01-04
+icon: "Waypoints"
+level: 4
+platform: "both"
+targetStage: "MSc, advanced"
+mathPrereq: "Linear matrix inequalities (LMIs), stability of parameter-varying systems"
+tier: "pro"
+experiments:
+  - title: "Why one controller isn't enough"
+    description: "Push a single-point LQR/SMC design across a large flight envelope — big-angle quadrotor manoeuvres, or fixed-wing airspeed range — and watch performance degrade toward instability."
+  - title: "Classical gain scheduling"
+    description: "Design LQR gains at several operating points and interpolate by hand. Construct a point-to-point transition instability case: every design point is stable, the interpolated system in between is not."
+  - title: "LPV modelling"
+    description: "Build a polytopic LPV model over the scheduling parameters (airspeed / attitude), understand the physical meaning of the vertex systems, and run the offline LMI synthesis provided by the platform's MATLAB scripts."
+  - title: "Deploy and compare"
+    description: "Flash the scheduled-gain LPV controller to STM32 and run it against classical gain scheduling on the same point-to-point transition case that broke it earlier — this time it holds."
+---
+
+L4 exists to correct a habit most control engineering builds without meaning to: the belief that a controller tuned to work well at several points must work everywhere in between. It usually doesn't, and this level is built around making that failure visible before it's fixed properly.
+
+## A deliberately staged failure
+
+The signature experiment in L4 constructs a transition-instability case by design: several individually stable, well-tuned operating points, interpolated in the way engineers have always interpolated gains, producing an unstable trajectory in between. Watching your own correctly-tuned gains fail this way is what makes the LPV alternative land — a formal, LMI-backed guarantee replaces an interpolation you can no longer fully trust.
+
+## Offline design, online execution
+
+This level makes the offline-design-versus-online-execution boundary explicit for the first time: the LMI synthesis runs offline in MATLAB before the lab session; what actually executes on STM32 in real time is nothing more than gain interpolation against the scheduling parameter. That boundary — what's guaranteed offline, what merely executes online — is the same one every embedded control engineer has to internalise, and L5 depends on it directly.

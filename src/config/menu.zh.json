@@ -1,0 +1,135 @@
+{
+  "header": [
+    {
+      "enable": true,
+      "name": "首页",
+      "url": "/"
+    },
+    {
+      "enable": true,
+      "name": "课程体系",
+      "url": "/curriculum/",
+      "hasChildren": true,
+      "children": [
+        {
+          "enable": true,
+          "name": "全部五级",
+          "url": "/curriculum/"
+        },
+        {
+          "enable": true,
+          "name": "L1 — 经典 PID",
+          "url": "/curriculum/l1-pid/"
+        },
+        {
+          "enable": true,
+          "name": "L2 — LQR 与状态反馈",
+          "url": "/curriculum/l2-lqr-state-feedback/"
+        },
+        {
+          "enable": true,
+          "name": "L3 — 滑模控制",
+          "url": "/curriculum/l3-smc/"
+        },
+        {
+          "enable": true,
+          "name": "L4 — 从增益调度到 LPV",
+          "url": "/curriculum/l4-gain-scheduling-lpv/"
+        },
+        {
+          "enable": true,
+          "name": "L5 — LPV-SMC 与主动容错",
+          "url": "/curriculum/l5-lpv-smc-fdi/"
+        }
+      ]
+    },
+    {
+      "enable": true,
+      "name": "博客",
+      "url": "/blog/"
+    },
+    {
+      "enable": true,
+      "name": "关于",
+      "url": "/about/"
+    }
+  ],
+  "footer": [
+    {
+      "label": "快速链接",
+      "list": [
+        {
+          "enable": true,
+          "name": "关于",
+          "url": "/about/",
+          "active": true
+        },
+        {
+          "enable": true,
+          "name": "博客",
+          "url": "/blog/"
+        },
+        {
+          "enable": true,
+          "name": "联系我们",
+          "url": "/#contact"
+        }
+      ]
+    },
+    {
+      "label": "课程体系",
+      "list": [
+        {
+          "enable": true,
+          "name": "L1 — 经典 PID",
+          "url": "/curriculum/l1-pid/"
+        },
+        {
+          "enable": true,
+          "name": "L2 — LQR 与状态反馈",
+          "url": "/curriculum/l2-lqr-state-feedback/"
+        },
+        {
+          "enable": true,
+          "name": "L3 — 滑模控制",
+          "url": "/curriculum/l3-smc/"
+        },
+        {
+          "enable": true,
+          "name": "L4 — 从增益调度到 LPV",
+          "url": "/curriculum/l4-gain-scheduling-lpv/"
+        },
+        {
+          "enable": true,
+          "name": "L5 — LPV-SMC 与主动容错",
+          "url": "/curriculum/l5-lpv-smc-fdi/"
+        }
+      ]
+    },
+    {
+      "label": "更多",
+      "list": [
+        {
+          "enable": true,
+          "name": "全部课程",
+          "url": "/curriculum/"
+        },
+        {
+          "enable": true,
+          "name": "最新文章",
+          "url": "/blog/"
+        },
+        {
+          "enable": true,
+          "name": "服务条款",
+          "url": "/terms-conditions/"
+        },
+        {
+          "enable": true,
+          "name": "隐私政策",
+          "url": "/privacy-policy/"
+        }
+      ]
+    }
+  ]
+}

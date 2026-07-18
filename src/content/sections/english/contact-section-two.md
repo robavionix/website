@@ -1,16 +1,13 @@
 ---
 enable: true
-title: "Let’s build an awesome project together"
-description: "Share your goals with our team and we will help define the right strategy, scope, and delivery plan for your next technology project."
-officeHours: "Office Hours: Mon - Sat: 8:00 AM - 10:00 PM"
+title: "Bring Robavionix to your course"
+description: "Tell us about your course, cohort size, and timeline, and we'll help you figure out whether Core, Pro, or a Classroom set is the right fit."
+officeHours: "Usually replies within 2 business days"
 
 info:
-  - title: "Address"
-    icon: "MapPin"
-    description: "1800 Market Street, Suite 420 <br /> San Francisco, CA 94103"
   - title: "Contact"
     icon: "Mail"
-    description: "hello@example.com <br /> +1 415 555 2300"
+    description: "hello@robavionix.com"
 
 # Form title, description, fields, button, and submission messages are shared
 # from `contact-section.md`. Add `form:` here only for section-specific overrides.

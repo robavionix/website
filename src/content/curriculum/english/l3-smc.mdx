@@ -1,0 +1,32 @@
+---
+title: "L3 — Sliding Mode Control"
+description: "Design a sliding surface from a Lyapunov argument, feel chattering with your own hands on real actuators, and measure robustness that PID and LQR can't match."
+date: 2026-01-03
+icon: "Zap"
+level: 3
+platform: "both"
+targetStage: "MSc"
+mathPrereq: "Lyapunov stability, nonlinear systems"
+tier: "pro"
+experiments:
+  - title: "From Lyapunov to sliding surface"
+    description: "Derive a sliding surface as a combination of error and its derivative, prove reachability, and watch the trajectory converge onto it in real time."
+  - title: "Reaching law & chattering"
+    description: "Compare switching, exponential, and power-rate reaching laws. Feel chattering as physical actuator wear on hardware — not a paragraph in a textbook — then apply boundary-layer / saturation smoothing and watch it disappear."
+  - title: "Attitude SMC on the quadrotor"
+    description: "Full sliding mode attitude controller, benchmarked against L1/L2 on the identical fault set."
+  - title: "Robustness under escalating faults"
+    description: "Motor thrust degraded across three severities (60% → 40% → 25%). SMC keeps tracking after PID/LQR have already given up — measured, not asserted."
+  - title: "Fixed-wing extension"
+    description: "Longitudinal SMC on FT-1, robust against aerodynamic-coefficient uncertainty."
+---
+
+L3 is the first lesson in robustness. Everything before this level assumed the model was correct. L3 starts from the opposite assumption — the model is wrong, within bounds — and asks what a controller can guarantee anyway.
+
+## The hardware makes the tradeoff real
+
+Chattering is usually a footnote in a sliding-mode lecture. On real actuators at real switching frequencies, it's the sound and heat of a servo working itself to death. Students tune boundary-layer smoothing and hear the difference, which makes the classic "robustness vs. control-signal-quality" tradeoff something they've traded off themselves, not something they've read about.
+
+## The escalating-fault demonstration
+
+This level's signature experiment runs the same motor-degradation fault at three increasing severities and lines up PID, LQR, and SMC side by side. SMC is the only one still tracking at the last stage — and the point isn't "SMC wins," it's that the cost of that robustness (control-signal chatter) is visible on an oscilloscope, not asserted in a slide.
