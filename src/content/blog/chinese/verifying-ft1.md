@@ -4,7 +4,7 @@ description: "Robavionix 固定翼机体背后的每一个数字,都能追溯到
 date: 2026-07-20
 image: "/images/ft1/ft1-cover.jpg"
 draft: false
-categories: ["建站记录"]
+categories: ["验证与确认"]
 tags: ["AVL", "Simulink", "飞机设计", "飞行品质", "FT-1"]
 ---
 

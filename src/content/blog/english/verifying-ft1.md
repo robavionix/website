@@ -4,7 +4,7 @@ description: "Every number behind Robavionix's fixed-wing airframe traces to a f
 date: 2026-07-20
 image: "/images/ft1/ft1-cover.jpg"
 draft: false
-categories: ["Build Log"]
+categories: ["Verification & Validation"]
 tags: ["AVL", "Simulink", "aircraft design", "flying qualities", "FT-1"]
 ---
 
