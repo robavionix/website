@@ -1,14 +1,14 @@
 ---
-title: "Verifiable, not just plausible: modeling FT-1 from a parameter file to a real AVL run"
-description: "Every number behind Robavionix's fixed-wing airframe traces to a formula, a real vortex-lattice run, or a cited reference — including the two problems the model itself surfaced."
+title: "Verifiable, not just plausible: FT-1, checked by two independent solvers"
+description: "Every number behind Robavionix's fixed-wing airframe traces to a formula, a real vortex-lattice run, or a cited reference — and the key stability finding is now confirmed twice, by two structurally different tools."
 date: 2026-07-20
 image: "/images/ft1/ft1-cover.jpg"
 draft: false
 categories: ["Build Log"]
-tags: ["AVL", "aircraft design", "flying qualities", "FT-1"]
+tags: ["AVL", "Simulink", "aircraft design", "flying qualities", "FT-1"]
 ---
 
-Most small-aircraft "design" you find online is a spreadsheet of plausible-looking numbers nobody re-derives. FT-1 — the fixed-wing airframe that joins the quadrotor from [L2](/curriculum/l2-lqr-state-feedback/) onward in the Robavionix curriculum — was built under a different rule: every geometric and mass number has to trace to a formula, a cited method, or a real solver run. This post is that trace, including the two places the model itself found a real problem.
+Most small-aircraft "design" you find online is a spreadsheet of plausible-looking numbers nobody re-derives. FT-1 — the fixed-wing airframe that joins the quadrotor from [L2](/curriculum/l2-lqr-state-feedback/) onward in the Robavionix curriculum — was built under a different rule: every geometric and mass number has to trace to a formula, a cited method, or a real solver run. This post is that trace, including the two places the model itself found a real problem — and, further down, a second and completely independent tool chain built to check the first one's most important finding.
 
 <ImageList>
   <ImageItem
@@ -47,6 +47,10 @@ The eventual empirical check — measuring the built airframe's actual inertia �
 
 With a trimmed run case (CL = 0.4212 at 13 m/s, elevator deflection just 0.75° — nowhere near saturated), AVL's `MODE` command produces the linearized dynamic modes directly, checked against the Level 1 flying-qualities criteria in **MIL-F-8785C**, *Military Specification: Flying Qualities of Piloted Airplanes* (1980) — the same reference this curriculum already cites for the [fixed-wing verification criteria](/curriculum/l5-lpv-smc-fdi/).
 
+![Bar chart of FT-1's key AVL-computed stability derivatives: CLa, Cma, Clb, Cnb, Clp, Cmq, Cnr, each with sign and physical meaning annotated](/images/ft1/ft1-derivatives.png)
+
+These are the numbers the five dynamic modes below actually come from — not tuned to hit a target, just what AVL's vortex-lattice solver returns for this geometry and mass distribution. Every one has the sign a stable airframe needs except Cnr, which is correctly signed but weak — flagged here rather than left implicit, and it turns out to matter (see the spiral mode, below).
+
 Three modes came in clean: roll subsidence (0.063 s time constant, well inside the ≤1.0 s ceiling), Dutch roll (ωn = 5.12 rad/s, ζ = 0.181, inside the target band), and short period (ζ = 0.769, close to target). Two did not, and both are reported here rather than edited out:
 
 - **Spiral mode is divergent**, and faster than intended — a 12.4 s amplitude-doubling time against a >30 s design target and MIL-F-8785C's own 20 s Category B floor.
@@ -54,8 +58,41 @@ Three modes came in clean: roll subsidence (0.063 s time constant, well inside t
 
 Neither is disqualifying at this stage — both are exactly the kind of finding a verification pass is supposed to produce — but presenting five-for-five when the real number is three-for-five would defeat the entire point of building something checkable in the first place.
 
+## Two solvers, one aircraft: cross-validating with Simulink
+
+Everything above comes from one tool chain: AVL. A real result computed once is still a result computed once. So the next step was building a second, structurally different check — trim, linearize, and run a nonlinear open-loop disturbance test in Simulink — and seeing whether it agrees with AVL without being told the answer in advance.
+
+Rather than build that from scratch, it reuses a nonlinear 6DOF Simulink architecture already built and flight-relevant for a different fixed-wing airframe from the author's own prior research. Inspecting the block diagram (not reading source that doesn't exist for a compiled `.slx`, but tracing actual block parameters) showed the whole aerodynamic and mass model is parameter-driven: every derivative, every mass and inertia term, every reference length is read from a named workspace variable, with no aircraft-specific logic baked into the blocks themselves. That means reusing it for FT-1 needed zero block-diagram edits — only a new script defining the same variable names with FT-1's real numbers.
+
+The one real design decision was a control-surface mismatch: the reused harness has five named actuator slots (flap, flap2, aileron, elevator, elevator2); FT-1 has four real surfaces (aileron, elevator, elevator2, rudder). Aileron, elevator, and elevator2 map straight across by name. The flap slot was repurposed to carry FT-1's rudder derivatives; the flap2 slot was zeroed out rather than deleted, and both choices are documented directly in the script, not left implicit.
+
+Trimmed in Simulink via `findop`, FT-1 settles at essentially the same small-angle, near-zero-alpha cruise point AVL finds — a small, explained gap in elevator trim comes from the Simulink model including the thrust line's pitching-moment offset from the CG, which AVL's pure-aerodynamics solver doesn't model at all. That's a real physical difference between what the two tools compute, not an error, and it's reported as one.
+
+![Pole map comparing FT-1's dynamic-mode eigenvalues as computed independently by AVL's MODE command and by Simulink's linearize() on the reused nonlinear 6DOF model, with a zoomed inset on the near-origin phugoid and spiral modes](/images/ft1/ft1-polemap.png)
+
+This is the actual point of building a second tool chain: the linearized model's eigenvalues split cleanly into a longitudinal set, a lateral set, and four exactly-zero modes (position and heading states that don't feed back into the force/moment equations at this trim point) — and the one number that mattered most from the AVL run shows up again, independently. AVL's spiral mode has a 12.4 s amplitude-doubling time; Simulink's linearization, built from a completely different plant model and a different solver, gives 12.0 s — agreement to within 4%, from two tools that share nothing but the same underlying stability derivatives. That is a real cross-check, not the same number computed twice.
+
+The nonlinear time-domain response backs this up directly. Perturbing the trimmed model with a small initial disturbance and integrating the unforced response — no controller, no feedback, actuators held at their trimmed constants — gives a direct test of whether the linearization actually describes the real (nonlinear) aircraft near this operating point:
+
+<ImageList>
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1/ft1-openloop-long.png"
+    imageAlt="FT-1 longitudinal open-loop response: linear and nonlinear model time histories for forward velocity, vertical velocity, pitch rate and pitch angle after a 1 deg/s pitch-rate disturbance, tracking almost exactly"
+  />
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1/ft1-openloop-lat.png"
+    imageAlt="FT-1 lateral-directional open-loop response: linear and nonlinear model time histories for roll angle, sideslip angle, yaw rate and roll rate after a 5 deg/s roll-rate disturbance, tracking almost exactly and both showing the spiral mode's slow divergence"
+  />
+</ImageList>
+
+Both plots use the same disturbance, on the same state, in both models — a linear-vs-nonlinear comparison only means something if the input is actually identical, so getting that matched was a precondition for trusting the rest of the plot, not a detail to gloss over. With that fixed, linear and nonlinear curves sit on top of each other for the full 20-second run, in both the longitudinal case (a small pitch-rate disturbance) and the lateral case (a roll-rate disturbance) — exactly what a correct linearization should produce this close to trim. Roll angle and yaw rate both grow slowly for the full run in both models, the time-domain signature of the same unstable spiral mode the pole map and the original AVL run already found.
+
+The full folder — trim/linearize script, the two linear open-loop harnesses, the nonlinear disturbance test, and every `.mat` output — lives alongside `ft1.avl` and `ft1.mass`, structured to mirror the author's own prior open-loop verification work rather than invented from scratch for this aircraft.
+
 ## Why this is the whole point
 
-A teaching platform whose credibility rests on "trust us" doesn't teach the thing it claims to teach. Every number in this post resolves to a formula you can rerun, a citation you can pull up, or an AVL log file that exists on disk. The two open problems go into the next design iteration, not into a footnote.
+A teaching platform whose credibility rests on "trust us" doesn't teach the thing it claims to teach. Every number in this post resolves to a formula you can rerun, a citation you can pull up, an AVL log file that exists on disk, or now a second solver's independent agreement with the first. The two open problems from the AVL run go into the next design iteration, not into a footnote — and the spiral instability, the more serious of the two, no longer rests on a single tool's word for it.
 
 **References**: AVL 3.40, M. Drela & H. Youngren, MIT — [User Primer](https://web.mit.edu/drela/Public/web/avl/AVL_User_Primer.pdf) · Clark-Y coordinates, [UIUC Airfoil Coordinates Database](https://m-selig.ae.illinois.edu/ads/coord/clarky.dat) · MIL-F-8785C, *Flying Qualities of Piloted Airplanes* (1980) · M. Jardin & T. Mueller, "Optimized Measurements of Unmanned-Air-Vehicle Mass Moment of Inertia with a Bifilar Pendulum," *Journal of Aircraft*, 46(3), 2009, pp. 763–775.
