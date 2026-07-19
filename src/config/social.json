@@ -2,21 +2,27 @@
   "main": [
     {
       "enable": true,
+      "label": "linkedin",
+      "icon": "/images/icons/linkedin.svg",
+      "url": "https://www.linkedin.com/in/tianle-ma-robavionix"
+    },
+    {
+      "enable": true,
       "label": "github",
       "icon": "/images/icons/github.svg",
       "url": "https://github.com/robavionix"
     },
     {
       "enable": true,
-      "label": "linkedin",
-      "icon": "/images/icons/linkedin.svg",
-      "url": "https://www.linkedin.com/company/robavionix"
-    },
-    {
-      "enable": true,
       "label": "twitter",
       "icon": "/images/icons/twitter.svg",
       "url": "https://twitter.com/robavionix"
+    },
+    {
+      "enable": true,
+      "label": "wechat",
+      "icon": "/images/icons/wechat.svg",
+      "url": "/images/wechat-qr.png"
     }
   ]
 }
