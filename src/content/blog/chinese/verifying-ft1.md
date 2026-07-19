@@ -2,7 +2,7 @@
 title: "可验证,而不只是看起来合理:FT-1 从参数文件到真实 AVL 运行"
 description: "Robavionix 固定翼机体背后的每一个数字,都能追溯到一个公式、一次真实的涡格法计算,或一篇引用文献——包括模型自己揭示出的两个真问题。"
 date: 2026-07-20
-image: "/images/blog/blog-header.png"
+image: "/images/ft1/ft1-cover.jpg"
 draft: false
 categories: ["建站记录"]
 tags: ["AVL", "飞机设计", "飞行品质", "FT-1"]

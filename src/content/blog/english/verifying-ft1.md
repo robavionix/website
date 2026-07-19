@@ -2,7 +2,7 @@
 title: "Verifiable, not just plausible: modeling FT-1 from a parameter file to a real AVL run"
 description: "Every number behind Robavionix's fixed-wing airframe traces to a formula, a real vortex-lattice run, or a cited reference — including the two problems the model itself surfaced."
 date: 2026-07-20
-image: "/images/blog/blog-header.png"
+image: "/images/ft1/ft1-cover.jpg"
 draft: false
 categories: ["Build Log"]
 tags: ["AVL", "aircraft design", "flying qualities", "FT-1"]
