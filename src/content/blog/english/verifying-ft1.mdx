@@ -11,16 +11,8 @@ tags: ["AVL", "Simulink", "aircraft design", "flying qualities", "FT-1"]
 Most small-aircraft "design" you find online is a spreadsheet of plausible-looking numbers nobody re-derives. FT-1 — the fixed-wing airframe that joins the quadrotor from [L2](/curriculum/l2-lqr-state-feedback/) onward in the Robavionix curriculum — was built under a different rule: every geometric and mass number has to trace to a formula, a cited method, or a real solver run. This post is that trace, including the two places the model itself found a real problem — and, further down, a second and completely independent tool chain built to check the first one's most important finding.
 
 <ImageList>
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1/ft1-top-view.png"
-    imageAlt="FT-1 top view showing wing, tail, control surfaces and CG, drawn directly from AVL-verified geometry"
-  />
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1/ft1-front-view.png"
-    imageAlt="FT-1 front view showing 3 degree dihedral, verified against a real AVL Clbeta sign check"
-  />
+<ImageItem halfWidth imageSrc="/images/ft1/ft1-top-view.png" imageAlt="FT-1 top view showing wing, tail, control surfaces and CG, drawn directly from AVL-verified geometry" />
+<ImageItem halfWidth imageSrc="/images/ft1/ft1-front-view.png" imageAlt="FT-1 front view showing 3 degree dihedral, verified against a real AVL Clbeta sign check" />
 </ImageList>
 
 Both drawings are rendered directly from the coordinates in `ft1.avl`, not sketched — the fuselage outline is the one explicitly-flagged exception, still illustrative pending a finished cross-section.

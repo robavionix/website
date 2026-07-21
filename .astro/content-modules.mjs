@@ -1,5 +1,9 @@
 
 export default new Map([
+["src/content/blog/chinese/ft1-first-attitude-hold.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fchinese%2Fft1-first-attitude-hold.mdx&astroContentModuleFlag=true")],
+["src/content/blog/chinese/verifying-ft1.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fchinese%2Fverifying-ft1.mdx&astroContentModuleFlag=true")],
+["src/content/blog/english/ft1-first-attitude-hold.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fenglish%2Fft1-first-attitude-hold.mdx&astroContentModuleFlag=true")],
+["src/content/blog/english/verifying-ft1.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fblog%2Fenglish%2Fverifying-ft1.mdx&astroContentModuleFlag=true")],
 ["src/content/curriculum/chinese/l1-pid.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fcurriculum%2Fchinese%2Fl1-pid.mdx&astroContentModuleFlag=true")],
 ["src/content/curriculum/chinese/l2-lqr-state-feedback.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fcurriculum%2Fchinese%2Fl2-lqr-state-feedback.mdx&astroContentModuleFlag=true")],
 ["src/content/curriculum/chinese/l3-smc.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fcurriculum%2Fchinese%2Fl3-smc.mdx&astroContentModuleFlag=true")],

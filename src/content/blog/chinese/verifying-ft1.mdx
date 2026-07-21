@@ -11,16 +11,8 @@ tags: ["AVL", "Simulink", "飞机设计", "飞行品质", "FT-1"]
 网上大部分小型飞行器的“设计”都是一张谁也没重新推导过的、看起来还算合理的数字表。FT-1——从 [L2](/curriculum/l2-lqr-state-feedback/) 起与四轴并行贯穿 Robavionix 课程体系的固定翼机体——遵循的是另一条规则:每一个几何和质量数字,都必须能追溯到一个公式、一个引用过的方法,或者一次真实的求解器运行。这篇文章就是那条追溯链本身,包括模型自己发现的两个真问题——以及后面为了核实其中最重要的一个发现,额外搭建的一条完全独立的工具链。
 
 <ImageList>
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1/ft1-top-view.png"
-    imageAlt="FT-1 俯视图,展示机翼、尾翼、操纵面与重心位置,直接由 AVL 验证过的坐标绘制"
-  />
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1/ft1-front-view.png"
-    imageAlt="FT-1 前视图,展示 3 度上反角,已通过真实 AVL 的 Clβ 符号检查验证"
-  />
+<ImageItem halfWidth imageSrc="/images/ft1/ft1-top-view.png" imageAlt="FT-1 俯视图,展示机翼、尾翼、操纵面与重心位置,直接由 AVL 验证过的坐标绘制" />
+<ImageItem halfWidth imageSrc="/images/ft1/ft1-front-view.png" imageAlt="FT-1 前视图,展示 3 度上反角,已通过真实 AVL 的 Clβ 符号检查验证" />
 </ImageList>
 
 两张图都是直接从 `ft1.avl` 里的坐标渲染出来的,不是手绘草图——机身外形是唯一明确标注的例外,仍是示意性的,等最终机身剖面定稿后修正。
