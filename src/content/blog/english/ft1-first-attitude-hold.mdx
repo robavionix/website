@@ -22,7 +22,7 @@ Nose up, level off, bank, level off again — chase camera, top-down ground trac
 
 ## Starting point: a model that trims and linearizes
 
-Yesterday's verified `ft1.avl` geometry and mass file trims to a cruise attitude in Simulink, and `linearize()` returns a 12-state linear model. Designing directly on that full model is a dead end — it carries 4 near-zero poles from the position/heading states, which don't feed back into the force/moment equations at this operating point, and `pidtune`/`isstable` flag those as instability that has nothing to do with the real pitch/roll dynamics. So it was split into two reduced 4-state loops instead: pitch on `[u w q theta]` + elevator, roll on `[v p r phi]` + aileron.
+Yesterday's verified [`ft1.avl`](/files/ft1/ft1.avl) geometry and mass file trims to a cruise attitude in Simulink, and `linearize()` returns a 12-state linear model. Designing directly on that full model is a dead end — it carries 4 near-zero poles from the position/heading states, which don't feed back into the force/moment equations at this operating point, and `pidtune`/`isstable` flag those as instability that has nothing to do with the real pitch/roll dynamics. So it was split into two reduced 4-state loops instead: pitch on `[u w q theta]` + elevator, roll on `[v p r phi]` + aileron.
 
 ![Pitch attitude-hold PID step response: 0.5 degree command, elevator deflection history](/images/ft1-pid/ft1-pid-pitch-response.png)
 
@@ -55,7 +55,7 @@ To make the aircraft read bigger on screen, the chase camera's view box got tigh
   />
 </ImageList>
 
-Every control surface in the 3D model is parsed straight out of `ft1.avl`'s real CONTROL cards — aileron at 75% chord, elevator and rudder at 60% — split at exactly the hinge fraction AVL defines, into a fixed structure and a separately-rotatable control surface. Because this visualization layer uses the same no-camber flat-plate approximation as the rest of this project's geometry rendering, the hinge kinematics come out exact: every point on a given section shares that section's Z, so rotating a surface about its hinge line needs no extra correction.
+Every control surface in the 3D model is parsed straight out of [`ft1.avl`](/files/ft1/ft1.avl)'s real CONTROL cards — aileron at 75% chord, elevator and rudder at 60% — split at exactly the hinge fraction AVL defines, into a fixed structure and a separately-rotatable control surface. Because this visualization layer uses the same no-camber flat-plate approximation as the rest of this project's geometry rendering, the hinge kinematics come out exact: every point on a given section shares that section's Z, so rotating a surface about its hinge line needs no extra correction.
 
 <ImageList>
   <ImageItem
@@ -89,8 +89,8 @@ The chase camera follows yaw and pitch, but deliberately *not* roll — that's w
 
 A simple fault model sits between the PID and the plant: the controller keeps computing as if the actuator were healthy (there's no fault detection or reconfiguration here — this is for *seeing* a fault, not testing an already-reconfigured controller), but what actually reaches the aircraft, and what anti-windup sees, is the degraded or frozen value. Three colours that can't be confused with each other: healthy (yellow, brightness scaled to actual deflection), half-effectiveness (solid orange, slow pulse), stuck (solid red, faster pulse).
 
-The genuinely interesting result wasn't scripted: once the aileron jams, the bank angle doesn't just sit at whatever it was when it froze — it keeps climbing on its own, because FT-1's spiral mode is already slightly unstable (the honest finding from yesterday's real AVL run — it's right there in `ft1.avl`'s header). With no aileron correcting it, the aircraft is effectively open-loop on roll, and what's left is exactly what an unstable spiral mode does: the angle keeps climbing. That's not a coincidence — it's the linear dynamics doing, honestly, what they do.
+The genuinely interesting result wasn't scripted: once the aileron jams, the bank angle doesn't just sit at whatever it was when it froze — it keeps climbing on its own, because FT-1's spiral mode is already slightly unstable (the honest finding from yesterday's real AVL run — it's right there in [`ft1.avl`](/files/ft1/ft1.avl)'s header). With no aileron correcting it, the aircraft is effectively open-loop on roll, and what's left is exactly what an unstable spiral mode does: the angle keeps climbing. That's not a coincidence — it's the linear dynamics doing, honestly, what they do.
 
 ## What's shipped, and what's still open
 
-`plots/FT1_flight_animation.mp4` — the one embedded above — runs the **fault-free** configuration: the three-colour fault indication is built and tested, but deliberately switched off for today's delivered version, so the aircraft stays healthy throughout. The full-coupled-model roll shortfall (bug two) also isn't root-caused yet, just pragmatically compensated for with a bigger commanded angle. Both are written down in the internal session log so neither gets quietly lost before the next pass.
+[`plots/FT1_flight_animation.mp4`](/videos/ft1/ft1-pid-flight-demo.mp4) — the one embedded above — runs the **fault-free** configuration: the three-colour fault indication is built and tested, but deliberately switched off for today's delivered version, so the aircraft stays healthy throughout. The full-coupled-model roll shortfall (bug two) also isn't root-caused yet, just pragmatically compensated for with a bigger commanded angle. Both are written down in the internal session log so neither gets quietly lost before the next pass.

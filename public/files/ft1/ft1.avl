@@ -1,0 +1,123 @@
+#***************************************
+# AVL dataset for FT-1 (Robavionix fixed-wing teaching airframe)
+# Verified with a real AVL 3.40 run on 2026-07-19 (load, OPER/X, ST) --
+# geometry loads clean (0 errors) and static margin has been closed-loop
+# corrected against the real neutral point. See derivation log Sec. 10
+# for the full run log, the clarky.dat header-format bug that was found
+# and fixed, and the honest spiral-stability finding (Clb*Cnr/Clr*Cnb<1).
+#
+# Traceability: every number below is derived in
+#   FT-1 Geometry Design Derivation Log.md / FT-1几何设计推导记录.md
+# Coordinate frame: origin at fuselage nose tip. X aft, Y right, Z up.
+#
+# STILL PLACEHOLDER / UNVERIFIED:
+#   - CL_max, alpha_stall, Cd_min, Cm_c/4 (Part 3 XFOIL not run yet -- no XFOIL on this machine)
+#   - Wing mount height Zroot=0.05 m (no fuselage cross-section defined yet)
+#   - Tail incidence = 0 deg (not yet trim-optimized against a real mass file)
+#   - Mass/inertia distribution (.mass file) -- needs bay layout decisions, not yet started
+#
+# CONFIRMED by the 2026-07-19 AVL run (no longer placeholder):
+#   - Clbeta = -0.0826 (correct sign), Cnbeta = +0.0685 (correct sign), Cmalpha = -1.189 (correct sign)
+#   - Xref corrected to 0.3033 m -> SM = 14.97% MAC (was 24.3% MAC at the original 0.28 m target)
+#   - Nose section is therefore 0.3033 m (was 0.28 m); total fuselage length is 1.0233 m (was 1.00 m)
+#***************************************
+FT-1
+#Mach
+ 0.0
+#IYsym   IZsym   Zsym
+ 0       0       0.0
+#Sref    Cref    Bref
+ 0.45    0.25    1.80
+#Xref    Yref    Zref      (moment ref point = CG; CORRECTED from 0.28 to 0.3033 after AVL SM check
+#                            found the original 25%-MAC target gave SM=24.3%, far above the 10-15%
+#                            target band -- see derivation log Sec. 10)
+ 0.3033  0.0     0.0
+#
+#===================================
+SURFACE
+Wing
+#Nchordwise  Cspace  Nspanwise  Sspace   (mesh convention matches raven.avl)
+30           1.0     30         -2.0
+YDUPLICATE
+0.0
+
+SECTION #1  root, y=0
+#Xle     Yle    Zle      Chord   Ainc
+0.2175   0.0    0.05000  0.25    2.0
+AFILE
+airfoils/clarky.dat
+
+SECTION #2  aileron inboard edge, y = 0.55 * (b/2) = 0.495
+#Xle     Yle    Zle      Chord   Ainc
+0.2175   0.495  0.07594  0.25    2.0
+CONTROL
+aileron  1.0  0.75  0.  1.0  0.  -1.
+AFILE
+airfoils/clarky.dat
+
+SECTION #3  aileron outboard edge, y = 0.95 * (b/2) = 0.855
+#Xle     Yle    Zle      Chord   Ainc
+0.2175   0.855  0.09481  0.25    2.0
+CONTROL
+aileron  1.0  0.75  0.  1.0  0.  -1.
+AFILE
+airfoils/clarky.dat
+
+SECTION #4  tip, y = b/2 = 0.90 (outboard of aileron, no control)
+#Xle     Yle    Zle      Chord   Ainc
+0.2175   0.90   0.09717  0.25    2.0
+AFILE
+airfoils/clarky.dat
+
+#
+#===================================
+SURFACE
+Htail
+#Nchordwise  Cspace  Nspanwise  Sspace
+8            1.0     8          1.0
+YDUPLICATE
+0.0
+
+SECTION #1  root, y=0
+#Xle      Yle    Zle    Chord   Ainc
+0.95875   0.0    0.0    0.165   0.0
+CONTROL
+elevator   1.0  0.60  0.  1.0  0.   1.
+CONTROL
+elevator2  1.0  0.60  0.  1.0  0.  -1.
+NACA
+0009
+
+SECTION #2  tip, y = bt/2 = 0.26
+#Xle      Yle    Zle    Chord   Ainc
+0.95875   0.26   0.0    0.165   0.0
+CONTROL
+elevator   1.0  0.60  0.  1.0  0.   1.
+CONTROL
+elevator2  1.0  0.60  0.  1.0  0.  -1.
+NACA
+0009
+
+#
+#===================================
+SURFACE
+Vtail
+#Nchordwise  Cspace  Nspanwise  Sspace
+8            1.0     8          1.0
+#  (no YDUPLICATE: single fin on the centreline)
+
+SECTION #1  root, z=0
+#Xle      Yle    Zle    Chord   Ainc
+0.95875   0.0    0.0    0.162   0.0
+CONTROL
+rudder  1.0  0.60  0.  0.  1.  1.
+NACA
+0009
+
+SECTION #2  tip, z = bv = 0.243
+#Xle      Yle    Zle    Chord   Ainc
+0.95875   0.0    0.243  0.162   0.0
+CONTROL
+rudder  1.0  0.60  0.  0.  1.  1.
+NACA
+0009

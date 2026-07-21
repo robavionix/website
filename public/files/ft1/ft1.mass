@@ -1,0 +1,45 @@
+#
+#  FT-1 Mass & Inertia breakdown
+#  Robavionix -- component buildup method (Path 1: shape-approximated
+#  components + parallel axis theorem), per the analytical approach
+#  described in FT-1 Geometry Design Derivation Log.md Sec. 11.
+#
+#  Battery X position is SOLVED, not assumed: it is the free variable
+#  that makes the mass-weighted CG land exactly on X=0.3033 m, the
+#  static-margin target found by the real AVL run in Sec. 10.
+#
+#  xyz is location of item's own CG
+#  Ixx.. are item's inertias about item's own CG (cross terms omitted,
+#  assumed 0 -- reasonable for these near-symmetric component shapes/placements)
+#
+#   x back
+#   y right
+#   z up
+#
+#  x,y,z system here must have origin
+#  at same location as AVL input file (nose tip)
+#
+Lunit = 1.0 m
+Munit = 1.0 kg
+Tunit = 1.0 s
+
+g   = 9.81
+rho = 1.225
+
+# Row order (no inline comments on data lines -- AVL's line reader chokes on
+# trailing text after the numeric fields, same failure mode the airfoil file
+# hit; see derivation log Sec. 11 note):
+#   1: wing structure       (thin-plate approx)
+#   2: fuselage+tail struct (thin-rod approx)
+#   3: propulsion (motor+ESC+prop, point mass)
+#   4: avionics+wiring      (point mass)
+#   5: margin/contingency   (placed neutrally at target CG)
+#   6: battery (100x35x25mm block) -- SOLVED position, see Sec. 11
+#
+#  mass    x       y     z        Ixx        Iyy        Izz
+   0.550   0.2925  0.0   0.07358  0.148500   0.002864   0.151364
+   0.500   0.51165 0.0   0.0      0.0        0.043631   0.043631
+   0.220   0.02    0.0   0.0      0.0        0.0        0.0
+   0.180   0.15    0.0   0.0      0.0        0.0        0.0
+   0.150   0.3033  0.0   0.0      0.0        0.0        0.0
+   0.400   0.2825  0.0   0.0      0.0000617  0.000354   0.000374

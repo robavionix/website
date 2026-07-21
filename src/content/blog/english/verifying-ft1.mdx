@@ -15,7 +15,7 @@ Most small-aircraft "design" you find online is a spreadsheet of plausible-looki
 <ImageItem halfWidth imageSrc="/images/ft1/ft1-front-view.png" imageAlt="FT-1 front view showing 3 degree dihedral, verified against a real AVL Clbeta sign check" />
 </ImageList>
 
-Both drawings are rendered directly from the coordinates in `ft1.avl`, not sketched — the fuselage outline is the one explicitly-flagged exception, still illustrative pending a finished cross-section.
+Both drawings are rendered directly from the coordinates in [`ft1.avl`](/files/ft1/ft1.avl), not sketched — the fuselage outline is the one explicitly-flagged exception, still illustrative pending a finished cross-section.
 
 ## Sizing from first principles, not a spreadsheet
 
@@ -81,7 +81,7 @@ The nonlinear time-domain response backs this up directly. Perturbing the trimme
 
 Both plots use the same disturbance, on the same state, in both models — a linear-vs-nonlinear comparison only means something if the input is actually identical, so getting that matched was a precondition for trusting the rest of the plot, not a detail to gloss over. With that fixed, linear and nonlinear curves sit on top of each other for the full 20-second run, in both the longitudinal case (a small pitch-rate disturbance) and the lateral case (a roll-rate disturbance) — exactly what a correct linearization should produce this close to trim. Roll angle and yaw rate both grow slowly for the full run in both models, the time-domain signature of the same unstable spiral mode the pole map and the original AVL run already found.
 
-The full folder — trim/linearize script, the two linear open-loop harnesses, the nonlinear disturbance test, and every `.mat` output — lives alongside `ft1.avl` and `ft1.mass`, structured to mirror the author's own prior open-loop verification work rather than invented from scratch for this aircraft.
+The full folder — trim/linearize script, the two linear open-loop harnesses, the nonlinear disturbance test, and every `.mat` output — lives alongside [`ft1.avl`](/files/ft1/ft1.avl) and [`ft1.mass`](/files/ft1/ft1.mass), structured to mirror the author's own prior open-loop verification work rather than invented from scratch for this aircraft.
 
 ## Why this is the whole point
 
