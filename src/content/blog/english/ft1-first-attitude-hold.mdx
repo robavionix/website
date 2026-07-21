@@ -1,0 +1,96 @@
+---
+title: "FT-1 moves for the first time: attitude-hold PID, and a fault you can actually watch happen"
+description: "From yesterday's verified AVL geometry to today's trim, linearization, two reduced-order PID loops, three real bugs along the way, and a 3D animation clean enough that you can actually see which surface is moving and why."
+date: 2026-07-21
+image: "/images/ft1-pid/ft1-pid-cover.png"
+draft: false
+categories: ["Control Systems"]
+tags: ["PID", "FT-1", "Simulink", "3D visualization", "fault injection", "anti-windup"]
+---
+
+Yesterday's post left FT-1 with a clean linear model, checked by two independent solvers. Today's job was to give it its first real controller — a pair of attitude-hold PID loops — tune it, hit real problems, fix them, and end up with a 3D animation clear enough that anyone can tell what the aircraft is doing at a glance. This post is that path, including three real bugs along the way and one result the aircraft worked out entirely on its own.
+
+<VideoInline
+  src="/videos/ft1/ft1-pid-flight-demo.mp4"
+  provider="html5"
+  type="video/mp4"
+  poster="/images/ft1-pid/ft1-bank-healthy.png"
+  title="FT-1 attitude-hold PID 3D flight demo"
+/>
+
+Nose up, level off, bank, level off again — chase camera, top-down ground track on the side, control surfaces glowing yellow whenever they're actually moving. That's the whole video. Getting these clean 25 seconds took a lot less clean debugging.
+
+## Starting point: a model that trims and linearizes
+
+Yesterday's verified `ft1.avl` geometry and mass file trims to a cruise attitude in Simulink, and `linearize()` returns a 12-state linear model. Designing directly on that full model is a dead end — it carries 4 near-zero poles from the position/heading states, which don't feed back into the force/moment equations at this operating point, and `pidtune`/`isstable` flag those as instability that has nothing to do with the real pitch/roll dynamics. So it was split into two reduced 4-state loops instead: pitch on `[u w q theta]` + elevator, roll on `[v p r phi]` + aileron.
+
+![Pitch attitude-hold PID step response: 0.5 degree command, elevator deflection history](/images/ft1-pid/ft1-pid-pitch-response.png)
+
+![Roll attitude-hold PID step response: 10 degree command, aileron deflection history](/images/ft1-pid/ft1-pid-roll-response.png)
+
+Gains came from `pidtune(G,'PIDF',wc,pidtuneOptions('PhaseMargin',60))`, then re-expressed as a 2-DOF PID (b=1, c=0) so the derivative acts only on the measured attitude, not on the commanded step itself — the naive 1-DOF version demanded over 2500 degrees of elevator for a 1-degree step, purely from derivative kick on the setpoint jump. The 2-DOF form has identical closed-loop poles but a sane transient.
+
+Solving the trim equations near the operating point (`Along*x + Belong*u = 0` with `theta = cmd`) turned up something else: FT-1's tail is control-power-limited — holding a 1-degree *sustained* pitch change with no throttle retrim needs roughly 38 degrees of elevator. With a ±25 degree saturation limit assumed, that caps the exactly-trackable command range at about 0.65 degrees — which is why this demo uses 0.5 degrees, not something bigger.
+
+## Three real bugs along the way
+
+### Bug one: anti-windup's false equilibrium
+
+Partway through, `Kp` got pushed to 500x the tuned value chasing a faster response. Theta got permanently stuck at 0.44 degrees (commanding 0.5), phi stuck at 3.3 degrees (commanding 10) — not slow, just never getting there. Tracing it down: the back-calculation anti-windup term `Kb*(u - u_unsat)` scales with how far the unsaturated command overshoots the limit, and at that extreme `Kp` it completely overpowered the integrator, freezing it at a non-zero-error equilibrium. Reverting to the verified-working `*50` gains fixed both tracking and the return to trim.
+
+### Bug two: roll comes up short in the full coupled model
+
+The reduced model (the one the gains were actually tuned on) tracks the full 10-degree command cleanly. But the animation needs position states the reduced model doesn't have, so a separate `ode45` closed loop runs against the *full* 12-state model instead — same gains, but in that model roll only reaches a fraction of whatever's commanded (10 degrees commanded reaches about 3.5, 25 degrees reaches about 5). This isn't a "hasn't caught up yet" problem — it plateaus within about 4 seconds and stays flat regardless of hold time — it's a genuine steady-state limit tied to yaw/spiral cross-coupling that exists in the full model and not the reduced one. Not root-caused today; compensated for pragmatically by commanding a bigger angle. Left as an open item, not hidden.
+
+### Bug three: the ground vanished
+
+To make the aircraft read bigger on screen, the chase camera's view box got tightened from ±8m to ±4m — but the ground plane's vertical offset (−4.5m at the time) didn't get tightened to match, so it sat entirely outside the visible window and every frame showed nothing but sky. This kind of "changed one thing, forgot the coupled thing" bug is worse to spot than a logic error, because nothing throws an error — the picture just looks wrong.
+
+## Drawing the actual skeleton, not a generic airplane icon
+
+<ImageList>
+  <ImageItem
+    imageSrc="/images/ft1-pid/ft1-pid-geometry-check.png"
+    imageAlt="FT-1's 3D geometry parsed directly from ft1.avl's section coordinates -- wing, tail, and fuselage"
+  />
+</ImageList>
+
+Every control surface in the 3D model is parsed straight out of `ft1.avl`'s real CONTROL cards — aileron at 75% chord, elevator and rudder at 60% — split at exactly the hinge fraction AVL defines, into a fixed structure and a separately-rotatable control surface. Because this visualization layer uses the same no-camber flat-plate approximation as the rest of this project's geometry rendering, the hinge kinematics come out exact: every point on a given section shares that section's Z, so rotating a surface about its hinge line needs no extra correction.
+
+<ImageList>
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid/ft1-level.png"
+    imageAlt="FT-1 in level flight, ground and sky split normally"
+  />
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid/ft1-pitch-healthy.png"
+    imageAlt="FT-1 mid pitch-up maneuver, elevator glowing yellow, healthy"
+  />
+</ImageList>
+
+The chase camera follows yaw and pitch, but deliberately *not* roll — that's what makes a bank read as "the aircraft tilting against a level horizon" instead of "the camera itself spinning." Getting this wrong the first time made the horizon look like it was swinging, not the aircraft banking.
+
+## Breaking a surface on purpose, and watching the answer
+
+<ImageList>
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid/ft1-elevator-half-fault.png"
+    imageAlt="Elevator effectiveness dropped to 35%, orange highlight"
+  />
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid/ft1-aileron-stuck.png"
+    imageAlt="Aileron jammed at neutral, red highlight, bank angle diverging on its own with no correction"
+  />
+</ImageList>
+
+A simple fault model sits between the PID and the plant: the controller keeps computing as if the actuator were healthy (there's no fault detection or reconfiguration here — this is for *seeing* a fault, not testing an already-reconfigured controller), but what actually reaches the aircraft, and what anti-windup sees, is the degraded or frozen value. Three colours that can't be confused with each other: healthy (yellow, brightness scaled to actual deflection), half-effectiveness (solid orange, slow pulse), stuck (solid red, faster pulse).
+
+The genuinely interesting result wasn't scripted: once the aileron jams, the bank angle doesn't just sit at whatever it was when it froze — it keeps climbing on its own, because FT-1's spiral mode is already slightly unstable (the honest finding from yesterday's real AVL run — it's right there in `ft1.avl`'s header). With no aileron correcting it, the aircraft is effectively open-loop on roll, and what's left is exactly what an unstable spiral mode does: the angle keeps climbing. That's not a coincidence — it's the linear dynamics doing, honestly, what they do.
+
+## What's shipped, and what's still open
+
+`plots/FT1_flight_animation.mp4` — the one embedded above — runs the **fault-free** configuration: the three-colour fault indication is built and tested, but deliberately switched off for today's delivered version, so the aircraft stays healthy throughout. The full-coupled-model roll shortfall (bug two) also isn't root-caused yet, just pragmatically compensated for with a bigger commanded angle. Both are written down in the internal session log so neither gets quietly lost before the next pass.
