@@ -1,27 +1,31 @@
 ---
 title: "About the Founder"
-metaDescription: "Robavionix comes out of one person's PhD research on fault-tolerant flight control for bio-inspired, morphing-wing UAVs — not a committee's whiteboard session."
+metaDescription: "Robavionix comes out of one person's PhD research on fault-tolerant flight control for morphing-wing UAVs — not a committee's whiteboard session."
 draft: false
 ---
 
-Robavionix comes out of one person's PhD research, not a committee's whiteboard session.
+I set out to become a car designer. Instead, fluid dynamics and control theory turned out to be my two worst subjects in the whole degree.
 
-## From gas turbines to glitching drones
+I'm the kind of person who, when a subject is my weakest, decides that's the exact one to go head-to-head with. So almost every choice I made afterwards was a deliberate step toward the thing I was worst at — and Robavionix, in the end, is that habit taken to its conclusion.
 
-Before fault-tolerant flight control, there was a mechanical engineering degree, then a master's in thermal power engineering — turbomachinery, blade cooling, gas turbine performance and diagnostics. The MSc thesis was a year-long project run in collaboration with a major aerospace manufacturer on boundary-layer-ingesting propulsion, ending in a findings presentation to the manufacturer's own project team. The path from jet engines to sliding mode control on morphing-wing UAVs wasn't a straight line, but it left a habit that shows up everywhere in this platform: an engineer's instinct for building things that have to survive contact with a real, physical, unforgiving system — not just a simulation that behaves.
+For my undergraduate thesis I threw myself at CFD, building a full turbine stator and rotor stage from scratch. For my master's I studied aero-engines, and picked a thesis on boundary-layer ingestion — deriving that part of the boundary-layer mesh by hand, then using CFD to compute the energy it bled away. Every time, I chose the fluids problem I was least comfortable with. By the time I came to choose a PhD, aerodynamics and propulsion were things I finally had a handle on — and the one area still completely blank was avionics and flight control. So once again, I picked the thing I was worst at.
 
-## The PhD that built this curriculum
+## The controller you can't see
 
-The research that eventually became L5 is a PhD at a UK university on fault-tolerant flight control for bio-inspired, morphing-wing aircraft — wings that change dihedral and sweep in flight, and the sliding-mode and LPV-based controllers that have to keep the aircraft flying when an actuator fails mid-manoeuvre. Getting the LPV side of that to hold together meant building structured datasets across 30+ dihedral-variation trim points and 25+ sweep-variation trim points, then designing weighted control-allocation logic that turns the redundancy a morphing wing creates into an actual robustness advantage instead of just extra actuators to coordinate. The fault side used nonlinear observer-based detection — the same underlying principle as the EKF-based sensor fusion this curriculum uses elsewhere, applied here to catch an actuator failure instead of estimating a state.
+This time was harder than any that came before. I barely knew MATLAB, I'd never touched flight control, and I essentially sat in with a room full of second-year undergraduates, spending a year cramming foundations that should have taken several.
 
-That work has been peer-reviewed and presented four times at IFAC and IEEE conferences over three years. It is the direct, un-textbook-ified source of [L5's LPV-SMC fault-tolerant controller](/curriculum/l5-lpv-smc-fdi/), and of the fault-detection and control-allocation reconfiguration built into it.
+But what really got to me wasn't the difficulty — it was that none of it was visible. The first time I learned PID, I'd stare at a spring-mass system and simply could not picture how P, I and D actually pulled it back into place. In the end I had to build a model I could see before it truly clicked. Later, with sliding mode control, the smooth factor was the same kind of thing: a parameter that lived only in the equations and refused to take shape in my head.
 
-## Also: several years in a lecture hall, and some hardware before any of this was a PhD
+My drones were never like that. In AVL I could see the aircraft, plainly — I could see every one of its aerodynamic parameters. The aerodynamics were visible; the controller stayed a ghost.
 
-Alongside the PhD came years as a control-engineering and Industry 4.0 teaching assistant — running labs and one-to-one mentoring for 150+ undergraduates a year, including co-developing the department's own PID trajectory-tracking teaching rig for a robotic arm. That's where the actual product idea came from, not from a market-research spreadsheet: watching, semester after semester, exactly where students hit the wall between "I can recite the Lyapunov argument" and "I have never once seen a controller actually fail."
+Then I ended up on the other side of the lecture hall. For several years as a control-engineering teaching assistant I took 150+ undergraduates a year, and watched them hit, over and over, the exact wall I'd hit myself: able to recite every step of a Lyapunov stability proof, yet having never once seen a controller actually work — or actually fail.
 
-The hands-on-hardware habit goes back further than the PhD, too: an early internship at an industrial robotics company doing Arduino-based Cartesian-space trajectory control on a robot arm, and — well outside flight control entirely — contributing development ideas and example code to a published textbook on embedded GNSS/cellular positioning systems.
+The design procedure on the exam paper, the tuning, the string of numbers — however elegant, none of it beats a real controller in your hand, a real sensor, and a real aircraft on the screen flying, manoeuvring, fighting to stay in control at the edge of failure.
 
-Robavionix exists to close that specific curriculum gap — on real hardware, safely, and as many times as it takes.
+## So Robavionix exists
+
+My PhD ran for over four years, on fault-tolerant flight control for bio-inspired, morphing-wing UAVs; the LPV/SMC work behind it was peer-reviewed and presented four times at IFAC and IEEE conferences, and it is the direct source of [L5](/curriculum/l5-lpv-smc-fdi/) in the curriculum. It was pure theory — but having built the whole path once, from modelling to simulation to controller design, I couldn't bring myself to leave it on paper.
+
+Robavionix moves that entire path onto real hardware, so students can watch a controller work, and watch it handle failure. Not something a committee drew on a whiteboard — something one person built line by line, failure by failure. On real boards, safely — failing as many times as it takes.
 
 Questions about the research behind a specific level, or how it maps to your syllabus? [Get in touch](/#contact).
