@@ -1,6 +1,6 @@
 ---
-title: "About the Founder"
-metaDescription: "Robavionix comes out of one person's PhD research on fault-tolerant flight control for morphing-wing UAVs — not a committee's whiteboard session."
+title: About the Founder
+metaDescription: Robavionix comes out of one person's PhD research on fault-tolerant flight control for morphing-wing UAVs — not a committee's whiteboard session.
 draft: false
 ---
 
