@@ -16,7 +16,7 @@ This time was harder than any that came before. I barely knew MATLAB, I'd never 
 
 But what really got to me wasn't the difficulty — it was that none of it was visible. The first time I learned PID, I'd stare at a spring-mass system and simply could not picture how P, I and D actually pulled it back into place. In the end I had to build a model I could see before it truly clicked. Later, with sliding mode control, the smooth factor was the same kind of thing: a parameter that lived only in the equations and refused to take shape in my head.
 
-My drones were never like that. In AVL I could see the aircraft, plainly — I could see every one of its aerodynamic parameters. The aerodynamics were visible; the controller stayed a ghost.
+My bio-inspired UAV were never like that. In AVL I could see the aircraft, plainly — I could see every one of its aerodynamic parameters. The aerodynamics were visible; the controller stayed a ghost.
 
 Then I ended up on the other side of the lecture hall. For several years as a control-engineering teaching assistant I took 150+ undergraduates a year, and watched them hit, over and over, the exact wall I'd hit myself: able to recite every step of a Lyapunov stability proof, yet having never once seen a controller actually work — or actually fail.
 
