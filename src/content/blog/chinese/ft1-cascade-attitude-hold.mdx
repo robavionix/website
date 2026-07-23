@@ -51,18 +51,9 @@ tags: ["PID", "级联控制", "FT-1", "Simulink", "3D 可视化", "根轨迹"]
 
 ## 结果
 
-<ImageList>
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-dualloop/ft1-dualloop-pitch-response.png"
-    imageAlt="级联俯仰阶跃响应:0.5度指令保持10秒,基本精确跟踪"
-  />
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-dualloop/ft1-dualloop-roll-response.png"
-    imageAlt="级联滚转阶跃响应:10度指令保持10秒,基本精确跟踪"
-  />
-</ImageList>
+![级联俯仰阶跃响应:0.5度指令保持10秒,基本精确跟踪](/images/ft1-pid-dualloop/ft1-dualloop-pitch-response.png)
+
+![级联滚转阶跃响应:10度指令保持10秒,基本精确跟踪](/images/ft1-pid-dualloop/ft1-dualloop-roll-response.png)
 
 俯仰:稳态误差1.8%,峰值到回落谷值的振荡幅度只有指令的1.6%——单环版本这个数字大约是指令幅值的40%。滚转:稳态误差4.4%,振荡幅度完全测不出来——滚转最快的那个模态本身开环阻尼就不错(大约37%),一旦下面加了角速度内环,基本没什么可打的了。两个舵面依然会在指令跳变的瞬间短暂打到±25度限位——这是快速阶跃响应该有的样子,不是持续饱和;保持阶段的其余时间里,舵面都稳稳地留在限位以内。
 

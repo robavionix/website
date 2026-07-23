@@ -51,18 +51,9 @@ It was `0 * Inf`. The outer loop's derivative filter constant is `N = 1/Tf`, and
 
 ## The result
 
-<ImageList>
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-dualloop/ft1-dualloop-pitch-response.png"
-    imageAlt="Cascade pitch step response: 0.5 degree command held for 10 seconds, tracked essentially exactly"
-  />
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-dualloop/ft1-dualloop-roll-response.png"
-    imageAlt="Cascade roll step response: 10 degree command held for 10 seconds, tracked essentially exactly"
-  />
-</ImageList>
+![Cascade pitch step response: 0.5 degree command held for 10 seconds, tracked essentially exactly](/images/ft1-pid-dualloop/ft1-dualloop-pitch-response.png)
+
+![Cascade roll step response: 10 degree command held for 10 seconds, tracked essentially exactly](/images/ft1-pid-dualloop/ft1-dualloop-roll-response.png)
 
 Pitch: 1.8% steady-state error and a peak-to-post-peak ringing of 1.6% of the command — down from roughly 40% of the command amplitude in the single-loop version. Roll: 4.4% steady-state error and no measurable ringing at all — roll's fast mode was already reasonably damped on its own (about 37% open-loop), so once it had a rate loop underneath it, there was nothing left to fight. Both surfaces still hit their ±25 degree limit briefly at command edges — that's a fast step response doing what a fast step response does, not sustained saturation; it settles well inside the limit for the rest of each hold.
 
