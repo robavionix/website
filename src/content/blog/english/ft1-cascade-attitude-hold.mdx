@@ -1,0 +1,86 @@
+---
+title: "FT-1 flies straighter: from a single loop that couldn't hold its own commands to a cascade that does"
+description: "Why a pure attitude PID can't damp a lightly-damped aerodynamic mode, the structural finding that made the fix obvious, a silent NaN that nearly hid it, and the inner-rate/outer-attitude cascade that finally tracks its commands cleanly."
+date: 2026-07-23
+image: "/images/ft1-pid-dualloop/ft1-dualloop-cover.png"
+draft: false
+categories: ["Control Systems"]
+tags: ["PID", "cascade control", "FT-1", "Simulink", "3D visualization", "root locus"]
+---
+
+Last time, FT-1 got its first attitude-hold PID, and along the way a real bug got fixed: independently-rescaled `Kp`/`Ki` gains had broken `pidtune`'s phase-margin guarantee, which is what made roll look like it had a hard steady-state ceiling. Fixing that got roll tracking cleanly. But it also surfaced an honest, harder question, written down at the end of that post: pitch still wasn't instant, even with clean gains, and pushing the gain harder just traded lag for visible overshoot. That's where today starts.
+
+<VideoInline
+  src="/videos/ft1/ft1-dualloop-flight-demo.mp4"
+  provider="html5"
+  type="video/mp4"
+  poster="/images/ft1-pid-dualloop/ft1-bank-healthy.png"
+  title="FT-1 cascade attitude-hold PID 3D flight demo"
+/>
+
+Same maneuver as last time — nose up, level, bank, level — but watch how flat the hold segments are now. No visible settling wobble on either axis. That's the actual deliverable today: not a bigger number, a *cleaner* one.
+
+## Why a single loop was always going to struggle with this
+
+The honest explanation from last post's closing section, restated with the theory behind it: FT-1's pitch axis has a phugoid mode — the slow trade-off between speed and altitude every fixed-wing aircraft has in some form — sitting at about 0.58 rad/s with only 4% damping open-loop. A pure attitude loop's correction has to pass through an extra integration (elevator moves pitch *rate*; rate integrates into *angle*) before it reaches the thing actually being measured. That lag puts the correction roughly out of phase with the oscillation it's supposed to be damping, so it excites the mode about as much as it suppresses it. No amount of retuning a single gain fixes a phase problem — it's a structural limit of the loop topology, not the numbers in it.
+
+The standard fix, used in real flight control systems for exactly this reason, is a **cascade**: an inner loop that feeds back body rate directly (no extra integration, so it can add real damping) commanding elevator/aileron, and an outer loop that feeds back attitude and commands the inner loop's rate setpoint.
+
+<ImageList>
+  <ImageItem
+    imageSrc="/images/ft1-pid-dualloop/ft1-dualloop-cover.png"
+    imageAlt="FT-1 cascade attitude-hold block diagram: outer attitude loop commanding an inner rate loop, both axes, color-coded by stage"
+  />
+</ImageList>
+
+Blue is the outer loop (attitude error → rate command), amber is the inner loop (rate error → actuator), green is the same 12-state linear airframe from last time — nothing about the plant changed, only what's wrapped around it.
+
+## The structural finding that decided the whole design
+
+Trying to design the inner loop the same way as before — `pidtune(G,'PIDF',wc,...)` — failed outright, at *every* bandwidth from 0.05 to 12 rad/s: it kept collapsing to a useless pure-integral controller. The reason turned out to be exact, not approximate: the reduced-order plant from elevator to pitch rate (and aileron to roll rate) has a **zero at the origin**. That's not a numerical artifact — it's physically necessary. A constant control-surface deflection settles to a new trim *attitude*, not a permanently nonzero *rate*; if it didn't, the aircraft would spin up forever under a fixed stick input. So the DC gain from surface to rate is exactly zero, and `pidtune`'s attempt to loop-shape a plant with zero low-frequency gain using an integral term (which needs low-frequency gain to work) is fighting the plant's own physics.
+
+The fix was to stop asking `pidtune` a question the plant can't answer. The inner loop doesn't need to track a *sustained* rate command anyway — a rate setpoint from the outer loop is transient by construction, heading back toward zero as the attitude error closes. What it needs is damping, and damping is a root-locus problem, not a loop-shaping one: sweep a plain proportional gain, watch where the lightly-damped pole pair moves, pick a gain that's actually buying meaningful damping. That's also, not coincidentally, how real aircraft rate-damper/SAS gains are usually chosen.
+
+The outer loop turned out simpler than expected: once you cascade the closed inner loop with the exact kinematic integrator relating rate to attitude (`theta_dot = q`, `phi_dot = p`), the plant the outer loop sees already contains a free integrator — so a plain **P** controller gives zero steady-state error for free, no `Ki` needed. Both outer loops, designed independently, converged to `Ki = 0` on their own. That's the whole controller: four proportional gains, no integrators, no derivative filters, nothing to anti-wind-up.
+
+## A bug that hid behind a `0 * Inf`
+
+Sweeping candidate inner/outer gain pairs to find good ones produced a full table of identical, useless numbers — every single combination saturating both actuators for the entire run, regardless of how mild or aggressive the tested gains were. That uniformity was the tell: a controller that's merely badly tuned degrades gracefully across a sweep; this looked like every candidate was hitting the exact same failure, which meant the *test itself* was broken, not the designs.
+
+It was `0 * Inf`. The outer loop's derivative filter constant is `N = 1/Tf`, and whenever `pidtune` correctly decided a candidate needed `Kd = 0` (which, per the finding above, is often — a plant with a free integrator frequently doesn't need derivative help), `Tf` came back `0`, so `N` came back `Inf`. The derivative term's formula, `Kd * N * (...)`, then evaluates `0 * Inf`, which is `NaN` under IEEE arithmetic — not an error, a silent poison value. MATLAB's `min`/`max` ignore `NaN` and return the other operand, so a saturation clamp fed a `NaN` command doesn't clamp *toward* a limit, it locks *onto* one, deterministically, every time. The whole sweep was quietly getting the same rate command (the positive saturation limit) no matter what gains produced it. The fix was a one-line guard — treat `Tf == 0` as `N = 0` instead of computing `1/0` — after which the sweep immediately started producing real, differentiated numbers.
+
+## The result
+
+<ImageList>
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-dualloop/ft1-dualloop-pitch-response.png"
+    imageAlt="Cascade pitch step response: 0.5 degree command held for 10 seconds, tracked essentially exactly"
+  />
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-dualloop/ft1-dualloop-roll-response.png"
+    imageAlt="Cascade roll step response: 10 degree command held for 10 seconds, tracked essentially exactly"
+  />
+</ImageList>
+
+Pitch: 1.8% steady-state error and a peak-to-post-peak ringing of 1.6% of the command — down from roughly 40% of the command amplitude in the single-loop version. Roll: 4.4% steady-state error and no measurable ringing at all — roll's fast mode was already reasonably damped on its own (about 37% open-loop), so once it had a rate loop underneath it, there was nothing left to fight. Both surfaces still hit their ±25 degree limit briefly at command edges — that's a fast step response doing what a fast step response does, not sustained saturation; it settles well inside the limit for the rest of each hold.
+
+Both numbers come from two independent implementations agreeing with each other: a hand-written `ode45` closed loop (the same one that feeds the 3D animation) and a from-scratch Simulink block diagram (the one pictured above), built programmatically from the same gains. Running both against the same command profile produces matching curves — which is the actual point of building it twice.
+
+<ImageList>
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-dualloop/ft1-level.png"
+    imageAlt="FT-1 in level flight before any command"
+  />
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-dualloop/ft1-pitch-healthy.png"
+    imageAlt="FT-1 mid pitch-up under the cascade controller, elevator visibly working"
+  />
+</ImageList>
+
+## What's still worth doing
+
+The fault-injection scenario from last post — half-effectiveness elevator, jammed aileron, the aircraft's own unstable spiral mode taking over once nothing's correcting it — hasn't been re-run against this controller yet. The cascade's inner loop changes how the aircraft responds to a jam in a way that's worth actually measuring rather than assuming carries over unchanged. That's the next thing to point a camera at.
