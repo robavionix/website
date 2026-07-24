@@ -227,3 +227,235 @@ collections:
               options: ["quadrotor", "fixed-wing"],
             }
       - { label: "Body", name: body, widget: markdown, i18n: true }
+
+  - name: homepage
+    label: "Homepage"
+    label_singular: "Homepage Section"
+    i18n: true
+    files:
+      - name: seo
+        label: "Homepage SEO"
+        file: "src/content/homepage/{{locale}}/-index.md"
+        i18n: true
+        fields:
+          - {
+              label: "Meta Description",
+              name: metaDescription,
+              widget: text,
+              required: false,
+              i18n: true,
+            }
+
+      - name: hero
+        label: "Hero Banner"
+        file: "src/content/sections/{{locale}}/banner-three.md"
+        i18n: true
+        fields:
+          - {
+              label: "Headline",
+              name: title,
+              widget: string,
+              i18n: true,
+              hint: "Supports <br/> for a manual line break.",
+            }
+          - {
+              label: "Subheadline",
+              name: description,
+              widget: text,
+              i18n: true,
+            }
+          - label: "Buttons"
+            name: buttons
+            widget: list
+            i18n: true
+            fields:
+              - { label: "Button Text", name: label, widget: string }
+              - {
+                  label: "Link URL",
+                  name: url,
+                  widget: string,
+                  required: false,
+                }
+
+      - name: skills
+        label: "Feature Highlight"
+        file: "src/content/sections/{{locale}}/startup-skill-section.md"
+        i18n: true
+        fields:
+          - { label: "Title", name: title, widget: string, i18n: true }
+          - { label: "Subtitle", name: subtitle, widget: text, i18n: true }
+          - {
+              label: "Description",
+              name: description,
+              widget: text,
+              i18n: true,
+            }
+          - label: "Buttons"
+            name: buttons
+            widget: list
+            i18n: true
+            required: false
+            fields:
+              - { label: "Button Text", name: label, widget: string }
+              - {
+                  label: "Link URL",
+                  name: url,
+                  widget: string,
+                  required: false,
+                }
+          - label: "List Items"
+            name: listItems
+            widget: list
+            i18n: true
+            required: false
+            fields:
+              - {
+                  label: "Title",
+                  name: title,
+                  widget: string,
+                  hint: "Supports <br/> for a manual line break.",
+                }
+
+      - name: process
+        label: "How It Works"
+        file: "src/content/sections/{{locale}}/working-process.md"
+        i18n: true
+        fields:
+          - {
+              label: "Title",
+              name: title,
+              widget: string,
+              i18n: true,
+              hint: "Supports <br/> for a manual line break.",
+            }
+          - label: "Steps"
+            name: list
+            widget: list
+            i18n: true
+            fields:
+              - { label: "Step Title", name: title, widget: string }
+              - {
+                  label: "Step Description",
+                  name: description,
+                  widget: text,
+                }
+
+      - name: services
+        label: "Curriculum Preview Section"
+        file: "src/content/sections/{{locale}}/services-section.md"
+        i18n: true
+        fields:
+          - {
+              label: "Title",
+              name: title,
+              widget: string,
+              i18n: true,
+              hint: "Supports <br/> for a manual line break.",
+            }
+          - label: "Button"
+            name: button
+            widget: object
+            i18n: true
+            required: false
+            fields:
+              - { label: "Button Text", name: label, widget: string }
+              - {
+                  label: "Link URL",
+                  name: url,
+                  widget: string,
+                  required: false,
+                }
+
+      - name: testimonial
+        label: "Testimonials"
+        file: "src/content/sections/{{locale}}/testimonial.md"
+        i18n: true
+        fields:
+          - { label: "Title", name: title, widget: string, i18n: true }
+          - label: "Quotes"
+            name: list
+            widget: list
+            i18n: true
+            required: false
+            fields:
+              - { label: "Quote", name: content, widget: text }
+              - label: "Customer"
+                name: customer
+                widget: object
+                fields:
+                  - { label: "Name", name: name, widget: string }
+                  - { label: "Role", name: role, widget: string }
+
+      - name: contact
+        label: "Contact Section"
+        file: "src/content/sections/{{locale}}/contact-section-two.md"
+        i18n: true
+        fields:
+          - { label: "Title", name: title, widget: string, i18n: true }
+          - {
+              label: "Description",
+              name: description,
+              widget: text,
+              i18n: true,
+            }
+          - {
+              label: "Office Hours",
+              name: officeHours,
+              widget: string,
+              i18n: true,
+              required: false,
+            }
+          - label: "Contact Info"
+            name: info
+            widget: list
+            i18n: true
+            required: false
+            fields:
+              - { label: "Title", name: title, widget: string }
+              - { label: "Description", name: description, widget: text }
+
+      - name: team
+        label: "Team / Founder Section"
+        file: "src/content/sections/{{locale}}/team-section.md"
+        i18n: true
+        fields:
+          - {
+              label: "Title",
+              name: title,
+              widget: string,
+              i18n: true,
+              hint: "Supports <br/> for a manual line break.",
+            }
+          - label: "Button"
+            name: button
+            widget: object
+            i18n: true
+            required: false
+            fields:
+              - { label: "Button Text", name: label, widget: string }
+              - {
+                  label: "Link URL",
+                  name: url,
+                  widget: string,
+                  required: false,
+                }
+
+      - name: blog_preview
+        label: "Blog Preview Section"
+        file: "src/content/sections/{{locale}}/blog-section.md"
+        i18n: true
+        fields:
+          - { label: "Title", name: title, widget: string, i18n: true }
+          - label: "Button"
+            name: button
+            widget: object
+            i18n: true
+            required: false
+            fields:
+              - { label: "Button Text", name: label, widget: string }
+              - {
+                  label: "Link URL",
+                  name: url,
+                  widget: string,
+                  required: false,
+                }
