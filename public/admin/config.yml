@@ -79,3 +79,99 @@ collections:
         }
       - { label: "Draft", name: draft, widget: boolean, default: false }
       - { label: "Body", name: body, widget: markdown, i18n: true }
+
+  - name: curriculum
+    label: "Curriculum Levels"
+    label_singular: "Curriculum Level"
+    folder: src/content/curriculum
+    create: true
+    i18n: true
+    slug: "{{slug}}"
+    identifier_field: title
+    fields:
+      - { label: "Title", name: title, widget: string, i18n: true }
+      - {
+          label: "Description",
+          name: description,
+          widget: text,
+          required: false,
+          i18n: true,
+        }
+      - { label: "Date", name: date, widget: datetime, required: false }
+      - {
+          label: "Cover Image",
+          name: image,
+          widget: image,
+          required: false,
+          i18n: duplicate,
+        }
+      - { label: "Draft", name: draft, widget: boolean, default: false }
+      - {
+          label: "Icon",
+          name: icon,
+          widget: string,
+          required: false,
+          i18n: duplicate,
+          hint: "Lucide icon name, e.g. Gauge, Boxes, Zap, Waypoints, ShieldCheck",
+        }
+      - {
+          label: "Level",
+          name: level,
+          widget: number,
+          required: false,
+          value_type: int,
+          min: 1,
+          max: 5,
+          i18n: duplicate,
+        }
+      - {
+          label: "Platform",
+          name: platform,
+          widget: select,
+          required: false,
+          options: ["quadrotor", "fixed-wing", "both"],
+          i18n: duplicate,
+        }
+      - {
+          label: "Target Stage",
+          name: targetStage,
+          widget: string,
+          required: false,
+          i18n: true,
+        }
+      - {
+          label: "Math Prerequisite",
+          name: mathPrereq,
+          widget: string,
+          required: false,
+          i18n: true,
+        }
+      - {
+          label: "Tier",
+          name: tier,
+          widget: select,
+          required: false,
+          options: ["core", "pro", "classroom"],
+          i18n: duplicate,
+        }
+      - label: "Experiments"
+        name: experiments
+        widget: list
+        required: false
+        i18n: true
+        fields:
+          - { label: "Title", name: title, widget: string }
+          - {
+              label: "Description",
+              name: description,
+              widget: text,
+              required: false,
+            }
+          - {
+              label: "Platform (leave blank unless this level splits by airframe)",
+              name: platform,
+              widget: select,
+              required: false,
+              options: ["quadrotor", "fixed-wing"],
+            }
+      - { label: "Body", name: body, widget: markdown, i18n: true }
