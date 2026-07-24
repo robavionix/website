@@ -1,0 +1,101 @@
+---
+title: "FT-1 gets an engine, and the throttle doesn't fly the axis you'd guess"
+description: "Adding a thrust channel meant retiring pitch-attitude-hold for flight-path-angle and speed hold — which turned up a model gap, a reversed actuator pairing an RGA analysis had to prove, a feedforward fix that made things worse, and two real rendering bugs found while watching the result fly."
+date: 2026-07-24
+image: "/images/ft1-pid-thrust/ft1-thrust-cover.png"
+draft: false
+categories: ["Control Systems"]
+tags: ["PID", "cascade control", "FT-1", "Simulink", "3D visualization", "thrust", "RGA"]
+---
+
+Every FT-1 controller so far has flown with the engine off — elevator and aileron only, holding pitch and roll attitude, no thrust modeled at all. Today FT-1 gets a nose-mounted propeller, and with it a different question to answer: not "hold this attitude," but hold **flight path angle** (gamma, the climb angle) and **speed** (u) — the two quantities an autopilot with a throttle actually cares about. Roll is untouched. Getting there took a model patch, a actuator pairing that turned out to be backwards from the obvious guess, a fix attempt that made things worse before the real fix was found, and two rendering bugs caught while watching the result fly in 3D.
+
+<VideoInline
+  src="/videos/ft1/ft1-thrust-flight-demo.mp4"
+  provider="html5"
+  type="video/mp4"
+  poster="/images/ft1-pid-thrust/ft1-bank-healthy.png"
+  title="FT-1 gamma/speed-hold autopilot with thrust, 3D flight demo"
+/>
+
+Climb, hold, accelerate, hold, bank, level — three commands, each given room to fully settle before the next one starts, because the slowest of the three loops here takes the better part of a minute to get there.
+
+## The pairing nobody would guess
+
+The instinctive design mirrors how a big jet's autothrottle works: elevator holds flight path, throttle holds speed. Wrong for FT-1, and not by a small margin. Computing the open-loop DC-gain matrix from `[elevator, throttle]` to `[gamma, u]` and its **Relative Gain Array** — the standard tool for picking actuator/output pairings in a multivariable system — comes out almost exactly anti-diagonal:
+
+```
+RGA = [0.0001  0.9999
+       0.9999  0.0001]
+```
+
+The low-interaction pairing is **elevator holds speed, throttle holds flight path** — backwards. The physical reason: on this light, slow (13 m/s), low-drag airframe, a sustained thrust change barely moves speed at all (checked directly — the throttle-to-speed DC gain stays near zero even at absurdly inflated drag assumptions). What it actually does is retrim **pitch attitude**, because gravity dominates the axial-force balance far more than any plausible drag-speed term does. This is the textbook "back side of the power curve" control law — pitch-for-speed, power-for-altitude — used for gliders and slow trainers, the reverse of a jet's front-side convention.
+
+## A model gap the pairing check exposed
+
+Getting to that RGA result surfaced a real gap first: the shared linearized model has `CD0 = 0` — a known placeholder (no XFOIL polar run yet), not a bug elsewhere, but it means all drag in the model is induced drag, which *decreases* with speed. There's no "faster means more drag" restoring force at all. Consequence: the raw throttle-to-speed gain is about 0.0004 (m/s)/N — a 0.1 m/s speed change would need roughly 250 N of sustained thrust on an airframe whose realistic motor tops out around 6-10 N. Patched with a locally-assumed profile-drag coefficient (`CD0 = 0.045`, typical for a small fixed-gear trainer), converted to a linearized drag derivative and added to the plant's own `u_dot` row — kept entirely inside this project's own files, never written back to the shared trim/linearization. Its main effect is damping the airframe's phugoid mode (open-loop damping ratio 0.04 to about 0.18); it does not fix the throttle-authority problem, which is what led to checking the pairing in the first place.
+
+## Three loops, two different shapes
+
+<ImageList>
+  <ImageItem
+    imageSrc="/images/ft1-pid-thrust/ft1-thrust-cover.png"
+    imageAlt="FT-1 gamma/speed-hold autopilot block diagram: elevator speed cascade, throttle flight-path-angle loop, aileron roll cascade unchanged"
+  />
+</ImageList>
+
+**Elevator** keeps the cascade shape from last time — an inner rate loop (`q`, plain proportional, identical gain to the old pitch-attitude design since the plant it damps didn't change) with an outer loop now closing on **speed** instead of attitude. That outer loop's plant gain turned out enormous, and `pidtune` responded by landing on `Kp = 0` — pure integral action, no proportional term at all, since the plant is already oversensitive.
+
+**Throttle** has no equivalent fast inner variable to cascade through — it only ever forces speed directly, nothing rotational — so it's architecturally closer to the *old single-loop* pitch design than to the cascade: one direct 2-DOF PIDF loop straight from flight-path-angle error to throttle.
+
+**Aileron** is untouched, reused byte-for-byte from the cascade design — confirmed, not assumed, that thrust has exactly zero coupling into the lateral states (the engine sits on the centerline with no incidence, so it's a pure body-axis force, no moment arm).
+
+## Does the controller need to fly like a pilot does?
+
+A real pilot climbing at constant airspeed adds power *and* manages pitch together — if you only add throttle, the aircraft's phugoid physics borrows the energy for climbing from kinetic energy, and speed genuinely dips. The obvious fix looked like a feedforward term on throttle, `mass * g * sin(gamma_cmd)`, mirroring what a real total-energy-control autopilot does — and it matched the closed loop's own steady-state throttle almost exactly, so the physics was right.
+
+Tested directly, it made the transient *worse*, not better: airspeed excursion grew from 1.36 to 1.68 m/s, elevator stayed pinned at its rail either way. The feedforward slams the full steady-state thrust in as an instant step, which is a *sharper* disturbance to the slow (pure-integral) speed loop than the PID's own gradual integral buildup was — the elevator loop didn't have time to react to a shock instead of a ramp.
+
+The real fix wasn't a controller change at all — it was realizing the flight-path-angle *command* itself was an instant step, which no real aircraft or autopilot would ever issue anyway. Passing gamma's command through a simple first-order reference filter (8-second time constant) before it reaches the throttle loop's setpoint, so it ramps in instead of jumping, dropped the airspeed excursion to 0.86 m/s and took the elevator off its rail entirely — down to 17 degrees, comfortably inside the ±25 limit — with the flight-path tracking itself coming out essentially free of overshoot as a bonus.
+
+## The result
+
+<ImageList>
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-thrust/ft1-thrust-gamma-response.png"
+    imageAlt="Flight-path-angle hold step response: 3 degree command, throttle perturbation history"
+  />
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-thrust/ft1-thrust-u-response.png"
+    imageAlt="Speed hold step response: 0.3 m/s command, elevator deflection history"
+  />
+</ImageList>
+
+Gamma settles to within 0.07% of a 3-degree command, essentially zero overshoot, peak throttle 1.03 N against a ±3 N budget. Speed settles to within 0.1% of a 0.3 m/s command with only about 7 degrees of elevator once it starts from an already-settled state. Roll is the same 4.4% steady-state error, zero measurable ringing the cascade design already established — unaffected by any of the above, exactly as the lateral-decoupling check said it should be.
+
+<ImageList>
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-thrust/ft1-level.png"
+    imageAlt="FT-1 in level flight before any command, ground rendering correctly"
+  />
+  <ImageItem
+    halfWidth
+    imageSrc="/images/ft1-pid-thrust/ft1-climb-elevator.png"
+    imageAlt="Elevator visibly working to hold speed constant during the climb"
+  />
+</ImageList>
+
+## Two real bugs found while watching it fly
+
+Extending the design to the full 12-state model and the same 3D animation pipeline from earlier posts turned up two rendering bugs that had nothing to do with the control law — worth writing up because both were caught by actually looking at the video, not by inspecting numbers.
+
+**The ground vanished right after the climb command.** The ground patch's vertical position was only ever set once, never updated per frame — fine when altitude wanders half a meter, as in earlier posts' demos, but this climb is a real ~65 meters, and the ground fell out of the chase camera's view window within seconds. Fixed by re-centering the ground's height on the aircraft's current altitude every frame, the same way its horizontal position already was.
+
+**A triangular "mountain" appeared in the ground once the aircraft's heading had rotated far enough.** (The uncorrected roll pulse turns the aircraft by design — a 10-degree bank held 15 seconds works out to about 113 degrees of heading change by the standard coordinated-turn formula, nothing here feeds rudder to stop it.) First guess was that the ground polygon was too large and hitting a rendering precision limit — wrong, confirmed by shrinking it 10x with zero change to the artifact's shape, which meant the visible edge was never the polygon's own boundary. The actual cause: the scene was rendering in MATLAB's default *orthographic* projection, where a flat plane never perspective-converges to a horizon — it just gets clipped to whatever the axis limits are, and this scene sets a tiny animated zoom box around the aircraft every frame. At headings aligned with that box's own axes the clip happens to look like a flat line; at an oblique heading it cuts across the ground diagonally. Fixed by switching to real perspective projection and letting the ground patch render unclipped and effectively enormous, so its horizon comes from genuine perspective convergence instead of an incidental clipping-box coincidence.
+
+## What's still open
+
+The elevator/throttle cross-coupling is smaller now, not gone — a much larger or faster flight-path command would still stress the elevator loop, since this is still two independent SISO loops reacting to a shared disturbance, not a true energy-based decoupler blending both actuators together (the standard TECS design). And `CD0 = 0.045` is still an assumption, not a measurement — the honest fix is running the airfoil polar this project has been waiting on since day one, not a better guess.
