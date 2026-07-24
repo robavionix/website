@@ -15,12 +15,38 @@ interface Props {
 
 const { content } = Astro.props;
 const {
-  data: { title, image },
+  data: { title, image, experiments },
 } = content;
 
 const services = await getCollectionCTM("curriculum", Astro.currentLocale);
 const { Content } = await render(content);
 const t = await useTranslations(Astro.currentLocale as string);
+
+// Most levels' experiments apply the same way regardless of airframe, so
+// they render as one flat numbered list. A level whose experiments carry a
+// mix of `platform` tags (e.g. fixed-wing vs. quadrotor steps that genuinely
+// differ in method, not just labelling) instead renders as separate
+// numbered tracks, one per platform, each restarting at 01.
+const platformLabels: Record<string, string> = {
+  "fixed-wing": t("curriculum.platformFixedWing"),
+  quadrotor: t("curriculum.platformQuadrotor"),
+};
+
+const taggedPlatforms = new Set(
+  (experiments ?? []).map((item) => item.platform).filter(Boolean),
+);
+
+const experimentGroups =
+  taggedPlatforms.size > 1
+    ? (["fixed-wing", "quadrotor"] as const)
+        .map((platformKey) => ({
+          label: platformLabels[platformKey],
+          items: (experiments ?? []).filter(
+            (item) => item.platform === platformKey,
+          ),
+        }))
+        .filter((group) => group.items.length > 0)
+    : [{ label: null, items: experiments ?? [] }];
 ---
 
 <section class="section-spacing-vertical">
@@ -44,6 +70,48 @@ const t = await useTranslations(Astro.currentLocale as string);
           Content && (
             <div class="service-single-content prose-styles content has-video-modal mt-10 md:mt-12">
               <Content components={shortcodes} />
+            </div>
+          )
+        }
+
+        {
+          experiments && experiments.length > 0 && (
+            <div class="mt-12 space-y-10 md:mt-16">
+              <h2>{t("curriculum.experimentsHeading")}</h2>
+
+              {experimentGroups.map((group) => (
+                <div class="space-y-6">
+                  {group.label && (
+                    <h3 class="text-primary text-base tracking-wide uppercase">
+                      {group.label}
+                    </h3>
+                  )}
+
+                  <div class="space-y-6">
+                    {group.items.map((item, index) => (
+                      <div
+                        class="flex gap-5"
+                        data-scroll-reveal="fade-up"
+                        data-scroll-reveal-delay={index * 100}>
+                        <span class="bg-primary flex size-10 flex-none items-center justify-center rounded-full text-sm leading-none font-semibold text-white">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+
+                        <div class="space-y-2">
+                          {group.label ? (
+                            <h4 class="text-dark text-lg">{item.title}</h4>
+                          ) : (
+                            <h3 class="text-dark text-lg">{item.title}</h3>
+                          )}
+                          {item.description && (
+                            <p class="text-sm">{item.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           )
         }

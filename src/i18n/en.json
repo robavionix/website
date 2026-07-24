@@ -28,6 +28,11 @@
     "tabs": "Tabs",
     "toggleNavigation": "Toggle navigation"
   },
+  "curriculum": {
+    "experimentsHeading": "Experiments in this level",
+    "platformFixedWing": "Fixed-wing track",
+    "platformQuadrotor": "Quadrotor track"
+  },
   "widgets": {
     "searchTitle": "Search",
     "postSearchFormPlaceholder": "Search levels, posts, or guides...",

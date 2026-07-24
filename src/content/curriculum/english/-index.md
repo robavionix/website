@@ -1,6 +1,6 @@
 ---
 title: "The Curriculum"
-metaDescription: "Five progressive controller levels on real hardware: PID, LQR, sliding mode control, gain scheduling, and active fault tolerance, from quadrotor to fixed-wing."
+metaDescription: "Five progressive controller levels on real hardware: PID, LQR, sliding mode control, gain scheduling, and active fault tolerance, on quadrotor and fixed-wing airframes side by side."
 draft: false
 
 # Override Default Content of `/sections/services-section.md` showing in curriculum list page

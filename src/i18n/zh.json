@@ -28,6 +28,11 @@
     "tabs": "标签页",
     "toggleNavigation": "切换导航"
   },
+  "curriculum": {
+    "experimentsHeading": "本级实验",
+    "platformFixedWing": "固定翼路线",
+    "platformQuadrotor": "四旋翼路线"
+  },
   "widgets": {
     "searchTitle": "搜索",
     "postSearchFormPlaceholder": "搜索课程、文章或指南...",

@@ -9,16 +9,30 @@ targetStage: "MSc"
 mathPrereq: "Lyapunov stability, nonlinear systems"
 tier: "pro"
 experiments:
-  - title: "From Lyapunov to sliding surface"
+  - platform: "fixed-wing"
+    title: "From Lyapunov to a sliding surface, on FT-1"
+    description: "Derive a sliding surface for FT-1's attitude dynamics as a combination of error and its derivative, prove reachability, and watch the trajectory converge onto it in real time — the same derivation as the quadrotor track, worked against a genuinely different set of dynamics."
+  - platform: "fixed-wing"
+    title: "Reaching law & chattering on FT-1's actuators"
+    description: "Compare switching, exponential, and power-rate reaching laws on the elevator and aileron servos. Feel chattering as real actuator wear, not a textbook footnote, then apply boundary-layer smoothing and watch it disappear."
+  - platform: "fixed-wing"
+    title: "Longitudinal SMC on FT-1"
+    description: "Full sliding-mode longitudinal controller for FT-1, robust against aerodynamic-coefficient uncertainty — benchmarked against L1's PID and L2's LQR on the same fixed-wing fault set."
+  - platform: "fixed-wing"
+    title: "Robustness against an actuator jammed at an unknown position"
+    description: "Same jammed-aileron fault as L2, made harder: the stuck deflection is now unknown, only bounded. Show the sliding surface still gets reached as long as the remaining control authority still dominates that bound — a condition students check, not assume — where L2's LQR could only handle a fault it already knew the exact size of."
+  - platform: "quadrotor"
+    title: "From Lyapunov to sliding surface"
     description: "Derive a sliding surface as a combination of error and its derivative, prove reachability, and watch the trajectory converge onto it in real time."
-  - title: "Reaching law & chattering"
+  - platform: "quadrotor"
+    title: "Reaching law & chattering"
     description: "Compare switching, exponential, and power-rate reaching laws. Feel chattering as physical actuator wear on hardware — not a paragraph in a textbook — then apply boundary-layer / saturation smoothing and watch it disappear."
-  - title: "Attitude SMC on the quadrotor"
+  - platform: "quadrotor"
+    title: "Attitude SMC on the quadrotor"
     description: "Full sliding mode attitude controller, benchmarked against L1/L2 on the identical fault set."
-  - title: "Robustness under escalating faults"
+  - platform: "quadrotor"
+    title: "Robustness under escalating faults"
     description: "Motor thrust degraded across three severities (60% → 40% → 25%). SMC keeps tracking after PID/LQR have already given up — measured, not asserted."
-  - title: "Fixed-wing extension"
-    description: "Longitudinal SMC on FT-1, robust against aerodynamic-coefficient uncertainty."
 ---
 
 L3 is the first lesson in robustness. Everything before this level assumed the model was correct. L3 starts from the opposite assumption — the model is wrong, within bounds — and asks what a controller can guarantee anyway.
@@ -29,4 +43,4 @@ Chattering is usually a footnote in a sliding-mode lecture. On real actuators at
 
 ## The escalating-fault demonstration
 
-This level's signature experiment runs the same motor-degradation fault at three increasing severities and lines up PID, LQR, and SMC side by side. SMC is the only one still tracking at the last stage — and the point isn't "SMC wins," it's that the cost of that robustness (control-signal chatter) is visible on an oscilloscope, not asserted in a slide.
+This level's signature demonstration comes in two flavours, one per airframe, and they escalate in different directions. On the quadrotor, the same motor-degradation fault runs at three increasing severities (60% → 40% → 25%) with PID, LQR, and SMC lined up side by side — SMC is the only one still tracking at the last stage. On FT-1, the escalation isn't severity, it's certainty: L2's LQR handles a jammed aileron whose stuck position is known; L3's SMC handles the same jam with that position now unknown, only bounded. Neither case is "SMC wins" as a slogan — the point is that the cost of that robustness (control-signal chatter) is visible on an oscilloscope, not asserted in a slide.

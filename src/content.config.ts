@@ -68,6 +68,12 @@ const curriculumCollection = defineCollection({
         z.object({
           title: z.string(),
           description: z.string().optional(),
+          // Tags one experiment to one airframe when a level's experiments
+          // diverge by platform (e.g. L1: fixed-wing gets a model-verify step
+          // via AVL, quadrotor gets a bench-characterized rigid-body model --
+          // different method, same purpose). Omit when a level's experiments
+          // apply the same way regardless of platform.
+          platform: z.enum(["quadrotor", "fixed-wing"]).optional(),
         }),
       )
       .optional(),

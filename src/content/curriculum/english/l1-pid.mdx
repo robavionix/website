@@ -1,34 +1,56 @@
 ---
 title: "L1 — Classical PID"
-description: "Build the flight-control intuition: design and tune a cascaded PID attitude controller, then watch it hold together as motor thrust degrades."
+description: "Build the flight-control intuition: design and tune a cascaded PID attitude controller on both a fixed-wing and a quadrotor airframe, and see why the two of them get there by genuinely different paths."
 date: 2026-01-01
 icon: "Gauge"
 level: 1
-platform: "quadrotor"
+platform: "both"
 targetStage: "Undergraduate, year 2-3"
 mathPrereq: "Transfer functions, frequency response"
 tier: "core"
 experiments:
-  - title: "Meet your airframe"
-    description: "Build physical intuition for how four motors and a rigid body combine to produce thrust and moment. Nudge the plant open-loop and watch it drift."
-  - title: "Rate-loop tuning"
+  - platform: "fixed-wing"
+    title: "Build and verify the airframe model"
+    description: "Build FT-1's aerodynamic model in AVL from its real geometry, then trim and linearize it in Simulink. Cross-check the linearization against a second, independent method before trusting a single number out of it — every controller in this level stands on this model."
+  - platform: "fixed-wing"
+    title: "Single-loop attitude PID"
+    description: "Design a straightforward attitude-only PID — pitch and roll each closing directly on elevator or aileron — and tune it against the linear model with pidtune. It mostly works, until you look closely: one axis rings for tens of seconds after every command and never quite settles, no matter how the single gain is retuned."
+  - platform: "fixed-wing"
+    title: "Cascade to rate + attitude"
+    description: "Work out why retuning the single loop can't fix the ringing: its correction reaches the aircraft's rate only after an extra integration, adding phase lag that excites a lightly-damped mode instead of damping it. Rebuild as an inner rate loop plus an outer attitude loop and watch steady-state error and ringing both collapse to a few percent of the command."
+  - platform: "fixed-wing"
+    title: "Test the linear design against the nonlinear aircraft"
+    description: "The cascade was designed entirely on a small-signal linear model. Run the same gains closed-loop against FT-1's full nonlinear dynamics and find out how much of that clean performance survives the assumptions the linearization made."
+  - platform: "fixed-wing"
+    title: "Fly with a control surface degraded"
+    description: "Inject a partial elevator or a jammed aileron mid-maneuver and record what the classical PID cascade does with a fault it was never designed to detect. This is the baseline every later level's fault-tolerant design gets measured against."
+  - platform: "quadrotor"
+    title: "Characterize and verify the airframe model"
+    description: "Build a rigid-body-plus-motor model from bench-measured thrust and torque coefficients — no aerodynamic panel code here, a quadrotor's model comes from characterizing hardware directly. Verify it against real thrust-stand data before trusting it for control design."
+  - platform: "quadrotor"
+    title: "Rate-loop tuning"
     description: "Design the inner angular-rate PID. Feel bandwidth, overshoot, and steady-state error as flight-relevant vocabulary, not textbook abstractions."
-  - title: "Cascaded rate + attitude loops"
-    description: "Add the outer attitude loop. Apply the 1/5-1/10 bandwidth-separation rule of thumb and fix integral windup by hand after deliberately saturating it."
-  - title: "First fault injection"
-    description: "Inject 60% single-motor thrust loss and IMU noise burst live. Record exactly how far PID can stretch before it loses stability — and where L3/L5 pick up the slack."
+  - platform: "quadrotor"
+    title: "Cascade to rate + attitude"
+    description: "A quadrotor doesn't get the fixed-wing's luxury of trying attitude-only control and watching it merely underperform — with no aerodynamic self-damping, an attitude loop with no rate feedback underneath it is a real crash risk, not a ringing curve on a plot. Work out why analytically first, then add the outer attitude loop on real hardware already knowing why it has to be there."
+  - platform: "quadrotor"
+    title: "Test the linear design against the nonlinear airframe"
+    description: "The cascade was tuned on a small-angle linearization. Push it into large-angle manoeuvres where the Euler-angle and gyroscopic-coupling nonlinearities the linear model ignored start to matter, and see where the margins actually are."
+  - platform: "quadrotor"
+    title: "First fault injection"
+    description: "Inject 60% single-motor thrust loss and an IMU noise burst live. Record exactly how far PID can stretch before it loses stability — and where L3/L5 pick up the slack."
 ---
 
-Every controller level in Robavionix runs on the same standard fault library, injected live through the same STM32 hardware. L1 is where that story starts: a classical cascaded PID attitude controller, tuned by hand, pushed until it breaks.
+Every controller level in Robavionix runs against the same standard fault library. L1 is where that story starts: a classical cascaded PID attitude controller, tuned by hand on two physically different airframes, pushed until each one breaks in its own way.
 
 ## Why start here
 
-Most control-education failures aren't about content depth — they're about students crossing a math threshold without ever touching hardware. L1 assumes only transfer functions and frequency response. No state space, no Lyapunov functions. The goal is a working controller on real motors inside the first lab session, and a precise, felt answer to the question: **how far can a PID controller be pushed before it gives up?**
+Most control-education failures aren't about content depth — they're about students crossing a math threshold without ever touching a real, verified plant. L1 assumes only transfer functions and frequency response. No state space, no Lyapunov functions. The goal is a working controller inside the first lab session on both airframes, and a precise, felt answer to a question that turns out to have two different answers: **how far can a PID controller be pushed before it gives up — and does that limit look the same on a quadrotor as it does on a fixed-wing aircraft?**
 
 ## What you build
 
-A rate-loop PID on each axis, then an outer attitude loop cascaded on top, deployed to the STM32 flight controller board and exercised against the physical quadrotor testbed inside the HIL rig — not a pure simulation.
+On the quadrotor: a rate-loop PID on each axis, then an outer attitude loop cascaded on top, deployed to the STM32 flight controller board and exercised against the physical quadrotor testbed inside the HIL rig — not a pure simulation. On FT-1: the same rate + attitude cascade structure, designed against an AVL/Simulink aerodynamic model that's cross-checked two independent ways before a single gain gets tuned against it, then pressure-tested against the full nonlinear aircraft before anything gets called "working."
 
 ## The fault story
 
-Every experiment in this level ends the same way: inject a standard fault (motor thrust degraded to 60%, then an IMU noise burst) and record what happens. The point isn't to make PID fail dramatically — it's to give students a **precise, hands-on baseline** for the phrase "robustness margin," so that when L3 introduces sliding mode control against the same fault, the improvement is something they measured themselves, not something a lecture slide told them was true.
+Every experiment in this level ends the same way: inject a fault from the standard library — degraded or jammed motor thrust on the quadrotor, a partial elevator or a jammed aileron on FT-1 — and record what happens. The point isn't to make PID fail dramatically — it's to give students a **precise, hands-on baseline** for the phrase "robustness margin," so that when L3 introduces sliding mode control against the same faults, the improvement is something they measured themselves, not something a lecture slide told them was true.

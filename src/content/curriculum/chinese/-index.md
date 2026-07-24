@@ -1,6 +1,6 @@
 ---
 title: "课程体系"
-metaDescription: "五级递进控制器课程,全部跑在真实硬件上:PID、LQR、滑模控制、增益调度、主动容错,从四轴无人机到固定翼。"
+metaDescription: "五级递进控制器课程,全部跑在真实硬件上:PID、LQR、滑模控制、增益调度、主动容错,四轴无人机与固定翼并行贯穿始终。"
 draft: false
 
 servicesSection:
