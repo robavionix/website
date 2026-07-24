@@ -1,30 +1,29 @@
 ---
-enable: true
-title: "See a controller fail.<br/>Then fix it."
-description: "Robavionix is a fault-tolerant flight control HIL teaching platform. Real STM32 hardware, real Simulink models, and a fault-injection switch — so students design a controller, then watch it lose stability and recover, live."
-mapImage: "/images/banner/map.svg"
-gradientBackgroundImage: "/images/banner/home-three-gradient-bg.svg"
-
+title: Watch your controller fly the plane, live.<br/>Then break it — and fix it yourself.
+description: Robavionix is a hands-on flight control kit. You get a real STMicroelectronics flight board, real sensors, and a Simulink 3D animation that shows exactly what your controller's doing to the plane. Once you've got it flying steady, we throw in a fault mid-flight — and it's on you to debug the controller and get it back under control.
 buttons:
-  - enable: true
-    label: "View the Curriculum"
-    url: "/curriculum/"
-    hoverEffect: "magnetic-text-flip"
-    variant: "fill"
-  - enable: true
-    label: "Get in Touch"
-    url: "/#contact"
-    hoverEffect: "magnetic-text-flip"
-    variant: "fill-white"
-  - enable: true
-    label: "Pre-order via Revolut"
-    url: "https://revolut.me/tianles68m"
-    hoverEffect: "magnetic"
-    class: "btn-outline-accent"
-    target: "_blank"
-    rel: "noopener noreferrer"
+  - label: View the Curriculum
+    url: /curriculum/
+    variant: fill
+    hoverEffect: magnetic-text-flip
+    enable: true
+  - label: Get in Touch
+    url: /#contact
+    variant: fill-white
+    hoverEffect: magnetic-text-flip
+    enable: true
+  - label: Pre-order via Revolut
+    url: https://revolut.me/tianles68m
     icon:
+      position: left
+      name: Wallet
       enable: true
-      name: "Wallet"
-      position: "left"
+    rel: noopener noreferrer
+    target: _blank
+    class: btn-outline-accent
+    hoverEffect: magnetic
+    enable: true
+gradientBackgroundImage: /images/banner/home-three-gradient-bg.svg
+enable: true
+mapImage: /images/banner/map.svg
 ---
