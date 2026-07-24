@@ -1,5 +1,5 @@
 ---
-title: ""
-metaDescription: "Robavionix is a fault-tolerant flight control HIL teaching platform. Real STM32 hardware, real Simulink models, and a fault-injection switch — design a controller, then watch it fail and recover, live."
+metaDescription: Robavionix is a fault-tolerant flight control teaching platform. It pairs real STM32 hardware with Simulink models and live flight animation, so you can watch exactly how the controller shapes the aircraft's attitude — then inject a fault and see its robustness bring the aircraft back under control.
+title: ''
 hasFooterDarkBackground: true
 ---
