@@ -1,5 +1,5 @@
 ---
-title: Watch your controller fly the plane, live.<br/>Then break it — and fix it yourself.
+title: The flight is animated. <br/>The controller and every fault it survives isn't.
 description: Robavionix is a hands-on flight control kit. You get a real STMicroelectronics flight board, real sensors, and a Simulink 3D animation that shows exactly what your controller's doing to the plane. Once you've got it flying steady, we throw in a fault mid-flight — and it's on you to debug the controller and get it back under control.
 buttons:
   - label: View the Curriculum
