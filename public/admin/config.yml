@@ -60,6 +60,57 @@ collections:
         }
       - { label: "Body", name: body, widget: markdown, i18n: true }
 
+  - name: blog_mdx
+    label: "Blog Posts (MDX)"
+    label_singular: "Blog Post (MDX)"
+    folder: src/content/blog
+    extension: mdx
+    create: true
+    i18n: true
+    slug: "{{slug}}"
+    identifier_field: title
+    fields:
+      - { label: "Title", name: title, widget: string, i18n: true }
+      - {
+          label: "Description",
+          name: description,
+          widget: text,
+          required: false,
+          i18n: true,
+        }
+      - { label: "Date", name: date, widget: datetime, required: false }
+      - {
+          label: "Cover Image",
+          name: image,
+          widget: image,
+          required: false,
+          i18n: duplicate,
+        }
+      - { label: "Draft", name: draft, widget: boolean, default: false }
+      - {
+          label: "Categories",
+          name: categories,
+          widget: list,
+          required: false,
+          i18n: true,
+        }
+      - {
+          label: "Tags",
+          name: tags,
+          widget: list,
+          required: false,
+          i18n: true,
+        }
+      - {
+          label: "Body",
+          name: body,
+          widget: code,
+          output_code_only: true,
+          default_language: "markdown",
+          i18n: true,
+          hint: "Raw MDX source, edited as plain text — this post uses JSX components (e.g. VideoInline, ImageList) that the rich-text Markdown widget could reformat or strip.",
+        }
+
   - name: pages
     label: "Static Pages"
     label_singular: "Page"
@@ -84,6 +135,7 @@ collections:
     label: "Curriculum Levels"
     label_singular: "Curriculum Level"
     folder: src/content/curriculum
+    extension: mdx
     create: true
     i18n: true
     slug: "{{slug}}"
