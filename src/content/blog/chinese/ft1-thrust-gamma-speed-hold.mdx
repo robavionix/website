@@ -60,18 +60,9 @@ RGA = [0.0001  0.9999
 
 ## 结果
 
-<ImageList>
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-thrust/ft1-thrust-gamma-response.png"
-    imageAlt="航迹角保持阶跃响应:3度指令,油门扰动量历史"
-  />
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-thrust/ft1-thrust-u-response.png"
-    imageAlt="速度保持阶跃响应:0.3 m/s指令,升降舵偏度历史"
-  />
-</ImageList>
+![航迹角保持阶跃响应:3度指令,油门扰动量历史](/images/ft1-pid-thrust/ft1-thrust-gamma-response.png)
+
+![速度保持阶跃响应:0.3 m/s指令,升降舵偏度历史](/images/ft1-pid-thrust/ft1-thrust-u-response.png)
 
 航迹角稳定在3度指令的0.07%误差以内,基本没有超调,峰值油门1.03 N,预算是±3 N。速度稳定在0.3 m/s指令的0.1%误差以内,只要是从已经稳定的状态开始,只需要大约7度的升降舵。滚转还是级联设计里那套4.4%稳态误差、测不出振荡的老数字——完全不受上面这些改动影响,和横侧向解耦检查预言的一样。
 

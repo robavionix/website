@@ -60,18 +60,9 @@ The real fix wasn't a controller change at all — it was realizing the flight-p
 
 ## The result
 
-<ImageList>
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-thrust/ft1-thrust-gamma-response.png"
-    imageAlt="Flight-path-angle hold step response: 3 degree command, throttle perturbation history"
-  />
-  <ImageItem
-    halfWidth
-    imageSrc="/images/ft1-pid-thrust/ft1-thrust-u-response.png"
-    imageAlt="Speed hold step response: 0.3 m/s command, elevator deflection history"
-  />
-</ImageList>
+![Flight-path-angle hold step response: 3 degree command, throttle perturbation history](/images/ft1-pid-thrust/ft1-thrust-gamma-response.png)
+
+![Speed hold step response: 0.3 m/s command, elevator deflection history](/images/ft1-pid-thrust/ft1-thrust-u-response.png)
 
 Gamma settles to within 0.07% of a 3-degree command, essentially zero overshoot, peak throttle 1.03 N against a ±3 N budget. Speed settles to within 0.1% of a 0.3 m/s command with only about 7 degrees of elevator once it starts from an already-settled state. Roll is the same 4.4% steady-state error, zero measurable ringing the cascade design already established — unaffected by any of the above, exactly as the lateral-decoupling check said it should be.
 
