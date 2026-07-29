@@ -1,0 +1,56 @@
+---
+title: "The linear model FT-1's autopilots were designed on, checked against the real nonlinear equations — twice"
+description: "Every FT-1 controller so far was designed on a linearized 12-state model. This is the check that model actually deserved: a genuine Simulink nonlinear airframe and an independently hand-derived one, both released from the same disturbance and compared against the linear model — plus what the aircraft does if nobody's flying it at all."
+date: 2026-07-29
+image: "/images/ft1-nonlinear-verify/ft1-openloop-lat.png"
+draft: false
+categories: ["Verification & Validation"]
+tags: ["AVL", "Simulink", "nonlinear dynamics", "FT-1", "6DOF", "verification"]
+---
+
+Every FT-1 controller posted so far — single-loop, cascade, gamma/speed-hold — was designed against one thing: a 12-state model produced by linearizing a Simulink airframe about straight-and-level trim. Linearizing is a small-signal approximation by construction; nothing in the design process so far had checked whether the real, nonlinear aircraft actually agrees with it. This post is that check, done two different ways, plus an answer to a question none of the controller posts needed to ask: what does FT-1 do with nobody flying it at all?
+
+## Two independent checks, not one
+
+**Check one** reuses the same Simulink "airframe" harness — Aerospace Blockset 6DOF (Euler Angle) plus an AVL-derivative aerodynamic buildup — that produces FT-1's linear model in the first place, but run open-loop instead of trimmed-and-linearized: release a small disturbance from trim, no controller, and watch the full nonlinear equations integrate forward. The companion linear run takes the same disturbance through the actual linearized state matrices. Same underlying block diagram either way, which makes this a self-consistency check: does linearizing this harness match running it.
+
+**Check two** is independent in a way the first one structurally can't be: a nonlinear 6DOF model hand-derived directly from Newton-Euler rigid-body equations and AVL's own documented stability-derivative convention, with no shared Simulink harness anywhere in the chain. Same disturbance, same comparison, but this time there's no way for a bug in the shared harness to hide from both sides at once.
+
+Both get the identical test: a small initial-condition disturbance, released from trim, actuators held fixed, 20 seconds, no controller.
+
+## Lateral: as close as two different tools get
+
+![FT-1 lateral-directional open-loop response: linear vs genuine Simulink nonlinear model, +5 deg/s roll-rate disturbance](/images/ft1-nonlinear-verify/ft1-openloop-lat.png)
+
++5 deg/s of initial roll rate, released with no rudder, no aileron correction, nothing. Roll angle, sideslip, yaw rate, roll rate — all four states from the genuine Simulink nonlinear model track the linear model's curve closely enough that the two lines are barely distinguishable at 20 seconds: **φ = 0.6950° (linear) vs 0.6949° (nonlinear)**, a difference in the fifth significant figure. The hand-derived independent model (check two) lands close by too — **φ = 0.6950° (linear) vs 0.7120° (hand-derived nonlinear)**, about 2.4% apart, the small residual most likely traceable to a rudder-derivative correction factor (`Cnr × 2.5`) that RAVEN's own original author flagged as empirically necessary but never explained — deliberately not reproduced here since nothing in this project's own derivation confirmed it.
+
+That's not roll settling — it's the aircraft's spiral mode being genuinely, mildly unstable (visible directly in the open-loop eigenvalues: `+0.057 rad/s`, the one positive real eigenvalue in an otherwise stable lateral-directional set), correctly reproduced by both the linear model and both nonlinear ones.
+
+## Longitudinal: a real, honest gap
+
+![FT-1 longitudinal open-loop response: linear vs genuine Simulink nonlinear model, +1 deg/s pitch-rate disturbance, showing a growing phugoid phase drift](/images/ft1-nonlinear-verify/ft1-openloop-long.png)
+
+The pitch axis doesn't match this cleanly, and it's worth showing the plot that says so rather than only the one that doesn't. +1 deg/s of pitch rate excites FT-1's phugoid — the slow trade of speed for altitude every fixed-wing aircraft has — and for the first cycle or two, linear and nonlinear track together. By the third oscillation, they've drifted about a quarter-period out of phase: the nonlinear model's phugoid runs measurably slower than the linear model's own eigenvalues (`-0.011 ± 0.627 rad/s`, a 10.0-second period) predict. This is the textbook signature of a genuinely nonlinear effect a linearization can't carry by construction — finite-amplitude oscillations don't have to share a small-signal model's frequency, even when the underlying equations are correct — not a bug in either model. Flagged here rather than smoothed over: a materially large-amplitude longitudinal maneuver should not be assumed to inherit the linear model's timing without checking.
+
+## A second, independent method agrees with the first
+
+![FT-1 lateral open-loop response: linear model vs a hand-derived nonlinear 6DOF model built with no shared Simulink harness](/images/ft1-nonlinear-verify/ft1-compare-lat.png)
+
+Check two's hand-derived model — built from Newton-Euler equations and AVL's own `pb/2V, qc/2V, rb/2V` rate convention directly, no Aerospace Blockset harness involved — reproduces the same spiral-mode growth, the same short-period/phugoid split, and the same order-of-magnitude agreement as check one. Two structurally unrelated implementations landing in the same place is the actual point of building a second one at all.
+
+## What FT-1 does with nobody flying it
+
+The genuine Simulink nonlinear model is also just an aircraft anyone can release from trim and watch. Extending the same lateral disturbance run from 20 seconds to 120, with every actuator pinned at its trim value the entire time:
+
+<VideoInline
+  src="/videos/ft1/ft1-openloop-spiral-demo.mp4"
+  provider="html5"
+  type="video/mp4"
+  title="FT-1 open-loop spiral divergence, +5 deg/s roll-rate disturbance released with no controller, 120s at 5x speed"
+/>
+
+Nothing dramatic happens for almost a minute. Then the mildly unstable spiral mode does exactly what an unstable mode does: **φ reaches 5° at t≈56s, 10° at t≈69s, 30° at t≈92s, 45° at t≈107s, 60° at t≈126s** — a slow, accelerating roll-off with no sign of arresting itself, descending as it goes (about 19 meters lost over the 120-second run). None of it is fast. All of it is one-directional. This is the same mode every FT-1 attitude-hold controller posted so far has been quietly correcting the entire time, made visible by the one thing none of those posts did: turning the controller off.
+
+## What this sets up
+
+Every number in this post — the phugoid drift, the spiral time-to-divergence, both nonlinear models' agreement with the linear one — depends on FT-1's control-derivative units being modeled correctly, which they weren't until a bug found afterward: AVL's `CONTROL` derivatives are per **degree**, not per radian like the rest of AVL's output, and the shared trim/linearize script had been treating them as per-radian. Fixed at the source and re-verified here; see the [PID series' own update notes](/blog/ft1-thrust-gamma-speed-hold/) for the fuller account of what that bug did to every controller's reported gains and deflection angles. This post's own numbers are all post-fix.
