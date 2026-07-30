@@ -1,11 +1,17 @@
 ---
-title: "Verifiable, not just plausible: FT-1, checked by two independent solvers"
-description: "Every number behind Robavionix's fixed-wing airframe traces to a formula, a real vortex-lattice run, or a cited reference — and the key stability finding is now confirmed twice, by two structurally different tools."
+title: 'Verifiable, not just plausible: FT-1, checked by two independent solvers'
+description: Every number behind Robavionix's fixed-wing airframe traces to a formula, a real vortex-lattice run, or a cited reference — and the key stability finding is now confirmed twice, by two structurally different tools.
 date: 2026-07-20
-image: "/images/ft1/ft1-cover.jpg"
+image: /images/ft1/ft1-cover.jpg
 draft: false
-categories: ["Verification & Validation"]
-tags: ["AVL", "Simulink", "aircraft design", "flying qualities", "FT-1"]
+categories:
+  - Verification & Validation
+tags:
+  - AVL
+  - Simulink
+  - aircraft design
+  - flying qualities
+  - FT-1
 ---
 
 Most small-aircraft "design" you find online is a spreadsheet of plausible-looking numbers nobody re-derives. FT-1 — the fixed-wing airframe that joins the quadrotor from [L2](/curriculum/l2-lqr-state-feedback/) onward in the Robavionix curriculum — was built under a different rule: every geometric and mass number has to trace to a formula, a cited method, or a real solver run. This post is that trace, including the two places the model itself found a real problem — and, further down, a second and completely independent tool chain built to check the first one's most important finding.
