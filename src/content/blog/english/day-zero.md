@@ -1,11 +1,15 @@
 ---
-title: "Day 0: the domain, the repo, and the rebuild"
-description: "A short, honest build log for the day this site actually went live — what got built, what's still just a plan, and why this gets written down at all."
+title: 'Day 0: the domain, the repo, and the rebuild'
+description: A short, honest build log for the day this site actually went live — what got built, what's still just a plan, and why this gets written down at all.
 date: 2026-07-19
-image: "/images/blog/blog-header.png"
+image: /images/blog/blog-header.png
 draft: false
-categories: ["Build Log"]
-tags: ["build in public", "github", "cloudflare"]
+categories:
+  - Build Log
+tags:
+  - build in public
+  - github
+  - cloudflare
 ---
 
 Nothing about Robavionix ships this week. No hardware, no curriculum video, no student has touched a fault-injection switch yet. What happened yesterday was smaller than that, and still worth writing down: the domain got registered, the GitHub repo went up, and the site got wired through Cloudflare Pages onto a real domain.
