@@ -1,11 +1,17 @@
 ---
-title: "Choosing the HIL reference hardware, before writing a line of control code"
-description: "A real flight controller on real silicon, talking to a virtual aircraft in Simulink — no motors, no propellers, no battery yet. The hardware decisions behind that loop, and why one board was already discontinued by the time we picked it."
+title: Choosing the HIL reference hardware, before writing a line of control code
+description: A real flight controller on real silicon, talking to a virtual aircraft in Simulink — no motors, no propellers, no battery yet. The hardware decisions behind that loop, and why one board was already discontinued by the time we picked it.
 date: 2026-07-20
-image: "/images/hardware/hw-selection-cover.jpg"
+image: /images/hardware/hw-selection-cover.jpg
 draft: false
-categories: ["Hardware"]
-tags: ["STM32", "Nucleo", "Simulink", "hardware-in-the-loop", "HIL"]
+categories:
+  - Hardware
+tags:
+  - STM32
+  - Nucleo
+  - Simulink
+  - hardware-in-the-loop
+  - HIL
 ---
 
 Today's work wasn't code — it was picking the two boards this whole platform runs on, and figuring out exactly what the first real milestone needs and doesn't need.
@@ -16,7 +22,7 @@ The near-term target is deliberately narrow: a flight-control law compiled and r
 
 ![Hardware-in-the-loop architecture: NUCLEO-H753ZI running the compiled flight controller exchanges control outputs and simulated sensor readings with a virtual aircraft model running in Simulink on the host PC](/images/hardware/hil-architecture.png)
 
-That framing matters for purchasing: a real IMU, real motors, and a real battery are all *next-phase* hardware, not this-phase hardware. The board's job right now is just to run the actual control law — PID today, LQR/SMC/LPV as the curriculum progresses — while Simulink's virtual aircraft plays the part of the physical world.
+That framing matters for purchasing: a real IMU, real motors, and a real battery are all _next-phase_ hardware, not this-phase hardware. The board's job right now is just to run the actual control law — PID today, LQR/SMC/LPV as the curriculum progresses — while Simulink's virtual aircraft plays the part of the physical world.
 
 ## NUCLEO-H753ZI — and the board it replaced
 
