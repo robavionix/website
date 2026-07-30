@@ -1,5 +1,5 @@
 ---
-title: 'Day 0: the domain, the repo, and the rebuild'
+title: 'Day 0: the domain, the repo, and a plan'
 description: A short, honest build log for the day this site actually went live — what got built, what's still just a plan, and why this gets written down at all.
 date: 2026-07-19
 image: /images/blog/blog-header.png
@@ -12,17 +12,21 @@ tags:
   - cloudflare
 ---
 
-Nothing about Robavionix ships this week. No hardware, no curriculum video, no student has touched a fault-injection switch yet. What happened yesterday was smaller than that, and still worth writing down: the domain got registered, the GitHub repo went up, and the site got wired through Cloudflare Pages onto a real domain.
+Robavionix was born today. The early groundwork was mundane by design: register a domain, stand up a GitHub repo, and wire the site through Cloudflare Pages onto that domain.
 
-## What actually happened
+## Where the idea came from
 
-The site started as a generic IT-services template — every page talking about "cloud consulting" and "digital transformation," a stock lightning-bolt logo, a fake team of twelve people with stock photos. Over one long session, that became this: the actual L1–L5 curriculum described in detail, a real (if deliberately anonymized) founder page, a custom logo built around the sliding-mode-control idea at the center of the product, and a bilingual EN/ZH site instead of the default EN/FR.
+I'm not, by training, a control-and-automation "professional." Everything I know about control systems I picked up during my PhD. Because of that, almost none of the fundamentals came easily — I had to chew through them one piece at a time, and in a little over a year I had to grow from an undergraduate-level newcomer in automatic control into something approaching a competent entry-level researcher at Master's standard.
 
-Repo's on GitHub, public. Deploy is on Cloudflare Pages, auto-building on every push to `main`. Domain's live. That's the whole boring, necessary stack — the kind of infrastructure that's supposed to disappear once it's working, which is exactly why it's worth one paragraph now, before it does.
+Along the way I ran into just how abstract control theory really is — not just the underlying mathematics, which is hard enough to hold onto, but even the "simple" physical examples everyone reaches for, spring-mass systems and pendulums included. My own students can't quite see how three numbers, P, I, and D, actually move a robot arm; in my first months of learning, neither could I, not even for the simplest textbook model — let alone sliding-mode control on a tailless, bio-inspired UAV.
+
+When a student asks, "sir, what actually *is* PID, and how does it control the arm," the best I can do is write three letters on paper and talk them through what each one does to the motion. It wears me out, and it leaves the student no less confused.
+
+So the thought was: what if a student could put their hands on an actual controller, and watch with their own eyes what changing P, I, D — or an LQR gain, or an SMC parameter — actually does to an actuator? Would that finally make it click?
 
 ## Why write this down at all
 
-The honest answer is that a fault-tolerant-control PhD doesn't turn into a shipped teaching product by accident, and the version of this story worth reading later isn't the one that starts at "and then we had 200 units sold" — it's the one with the boring first commit still in it. If you're going to build something in public, the site going live counts as day 0, even when day 0 is mostly configuration files.
+Honestly, a PhD in fault-tolerant control doesn't turn itself into a shipped teaching product by accident, and the version of this story worth reading later won't start with "spring-mass control using PID" — it'll start with a student watching a 3D-animated aircraft change how it flies as they change a controller's parameters. Today is day one of that undertaking. I don't know yet what it will give me back, but I'd like it, somehow, to return the education I was given, and the effort that went into earning it.
 
 ## What's actually next
 

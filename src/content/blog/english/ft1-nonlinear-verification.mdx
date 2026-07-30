@@ -2,7 +2,7 @@
 title: "The linear model FT-1's autopilots were designed on, checked against the real nonlinear equations — twice"
 description: "Every FT-1 controller so far was designed on a linearized 12-state model. This is the check that model actually deserved: a genuine Simulink nonlinear airframe and an independently hand-derived one, both released from the same disturbance and compared against the linear model — plus what the aircraft does if nobody's flying it at all."
 date: 2026-07-29
-image: "/images/ft1-nonlinear-verify/ft1-openloop-lat.png"
+image: "/images/ft1-nonlinear-verify/ft1-compare-lat.png"
 draft: false
 categories: ["Verification & Validation"]
 tags: ["AVL", "Simulink", "nonlinear dynamics", "FT-1", "6DOF", "verification"]
@@ -17,14 +17,6 @@ Every FT-1 controller posted so far — single-loop, cascade, gamma/speed-hold �
 **Check two** is independent in a way the first one structurally can't be: a nonlinear 6DOF model hand-derived directly from Newton-Euler rigid-body equations and AVL's own documented stability-derivative convention, with no shared Simulink harness anywhere in the chain. Same disturbance, same comparison, but this time there's no way for a bug in the shared harness to hide from both sides at once.
 
 Both get the identical test: a small initial-condition disturbance, released from trim, actuators held fixed, 20 seconds, no controller.
-
-## Lateral: as close as two different tools get
-
-![FT-1 lateral-directional open-loop response: linear vs genuine Simulink nonlinear model, +5 deg/s roll-rate disturbance](/images/ft1-nonlinear-verify/ft1-openloop-lat.png)
-
-+5 deg/s of initial roll rate, released with no rudder, no aileron correction, nothing. Roll angle, sideslip, yaw rate, roll rate — all four states from the genuine Simulink nonlinear model track the linear model's curve closely enough that the two lines are barely distinguishable at 20 seconds: **φ = 0.6950° (linear) vs 0.6949° (nonlinear)**, a difference in the fifth significant figure. The hand-derived independent model (check two) lands close by too — **φ = 0.6950° (linear) vs 0.7120° (hand-derived nonlinear)**, about 2.4% apart, the small residual most likely traceable to a rudder-derivative correction factor (`Cnr × 2.5`) that RAVEN's own original author flagged as empirically necessary but never explained — deliberately not reproduced here since nothing in this project's own derivation confirmed it.
-
-That's not roll settling — it's the aircraft's spiral mode being genuinely, mildly unstable (visible directly in the open-loop eigenvalues: `+0.057 rad/s`, the one positive real eigenvalue in an otherwise stable lateral-directional set), correctly reproduced by both the linear model and both nonlinear ones.
 
 ## Longitudinal: a real, honest gap
 
