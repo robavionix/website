@@ -1,6 +1,6 @@
 ---
-title: "FT-1 moves for the first time: attitude-hold PID, and a fault you can actually watch happen"
-description: "From yesterday's verified AVL geometry to today's trim, linearization, two reduced-order PID loops, three real bugs along the way, and a 3D animation clean enough that you can actually see which surface is moving and why."
+title: "FT-1's linear model gets a control attempt: attitude-hold PID, simple maneuver commands, and — most important of all — the 3D animation demo"
+description: "From verified AVL geometry, through trim, linearization, and two reduced-order PID loops, to simple filtered maneuver commands — watching PID drive the aircraft to a commanded maneuver and back to trim — and finally a 3D animation clear enough to see exactly which surface moves, and how a fault lights up red."
 date: 2026-07-21
 image: "/images/ft1-pid/ft1-pid-cover.png"
 draft: false
@@ -8,7 +8,7 @@ categories: ["Control Systems"]
 tags: ["PID", "FT-1", "Simulink", "3D visualization", "fault injection", "anti-windup"]
 ---
 
-Yesterday's post left FT-1 with a clean linear model, checked by two independent solvers. Today's job was to give it its first real controller — a pair of attitude-hold PID loops — tune it, hit real problems, fix them, and end up with a 3D animation clear enough that anyone can tell what the aircraft is doing at a glance. This post is that path, including three real bugs along the way and one result the aircraft worked out entirely on its own.
+The last post left FT-1 with a linear and nonlinear model, both verified by two independent solvers. This post's job is to bolt the first real controller onto that linear model — a pair of attitude-hold PID loops — and see whether something as structurally simple as single-loop PID can hold the aircraft's attitude through a maneuver at all. The bar here isn't high: the point isn't great control performance, it's checking whether a plain PID loop can even keep a grip on a system this complex — a full 6-DOF plant — laying groundwork for controlling the nonlinear model later, and, more than anything else, generating the material for the real deliverable of this post: a 3D animation clear enough that anyone can tell what the aircraft is doing at a glance.
 
 <VideoInline
   src="/videos/ft1/ft1-pid-flight-demo.mp4"
@@ -18,7 +18,7 @@ Yesterday's post left FT-1 with a clean linear model, checked by two independent
   title="FT-1 attitude-hold PID 3D flight demo"
 />
 
-Nose up, level off, bank, level off again — chase camera, top-down ground track on the side, control surfaces glowing yellow whenever they're actually moving. That's the whole video. Getting these clean 25 seconds took a lot less clean debugging.
+Nose up, level off, bank, level off again — chase camera, top-down ground track on the side, control surfaces glowing yellow whenever they're actually moving. That's what the video shows, but not everything the underlying MATLAB code can do: a failed control surface is set up to highlight in red, but since this simplest version of PID has no fault detection or fault-tolerant logic behind it, that part doesn't show up in this video yet.
 
 ## Starting point: a model that trims and linearizes
 
@@ -30,31 +30,11 @@ Yesterday's verified [`ft1.avl`](/files/ft1/ft1.avl) geometry and mass file trim
 
 Gains came from `pidtune(G,'PIDF',wc,pidtuneOptions('PhaseMargin',60))`, then re-expressed as a 2-DOF PID (b=1, c=0) so the derivative acts only on the measured attitude, not on the commanded step itself — the naive 1-DOF version demanded over 2500 degrees of elevator for a 1-degree step, purely from derivative kick on the setpoint jump. The 2-DOF form has identical closed-loop poles but a sane transient.
 
-Solving the trim equations near the operating point (`Along*x + Belong*u = 0` with `theta = cmd`) turned up something else: FT-1's tail is control-power-limited — holding a 1-degree *sustained* pitch change with no throttle retrim needs roughly 38 degrees of elevator. With a ±25 degree saturation limit assumed, that caps the exactly-trackable command range at about 0.65 degrees — which is why this demo uses 0.5 degrees, not something bigger.
+Solving the trim equations near the operating point (`Along*x + Belong*u = 0` with `theta = cmd`) turned up something else: FT-1's tail looked severely control-power-limited — holding a 1-degree *sustained* pitch change with no throttle retrim needed roughly 38 degrees of elevator. That's obviously not possible. I designed and specified every part of this aircraft myself — its maneuverability could not genuinely be this bad.
 
-## Three real bugs along the way
+After a long stretch of troubleshooting, and digging back through pitfalls I'd already hit once during my PhD, it came back to me: AVL's control-surface derivatives come out in radians, not degrees (see Update 2 below). Honestly, I didn't catch this until quite late in this chapter of the work, which meant every nonlinear and linear model built after it, and every PID controller built on top of them, needed substantial revision.
 
-### Bug one: anti-windup's false equilibrium
-
-Partway through, `Kp` got pushed to 500x the tuned value chasing a faster response. Theta got permanently stuck at 0.44 degrees (commanding 0.5), phi stuck at 3.3 degrees (commanding 10) — not slow, just never getting there. Tracing it down: the back-calculation anti-windup term `Kb*(u - u_unsat)` scales with how far the unsaturated command overshoots the limit, and at that extreme `Kp` it completely overpowered the integrator, freezing it at a non-zero-error equilibrium. Reverting to the verified-working `*50` gains fixed both tracking and the return to trim.
-
-### Bug two: the roll shortfall wasn't cross-coupling, it was the gains
-
-This one took longer to run down than it should have. Roll looked like it had a real steady-state limit: commanding 10 degrees plateaued at about 3.5, commanding 25 reached about 8-9 — a shortfall that arrived within a few seconds and then simply stayed put, which reads exactly like "the model can't get there" rather than "the model hasn't finished getting there." It got compensated for pragmatically (commanding a bigger angle for a more visible bank) instead of investigated, on the assumption it was yaw/spiral cross-coupling specific to the full 12-state model.
-
-That assumption was wrong. The actual cause: an earlier tuning pass had independently rescaled `Kp` (×50) and `Ki` (×0.01-0.1) on top of `pidtune`'s output, chasing a faster-looking response — which breaks the 60-degree phase-margin guarantee `pidtune` was solving for, since `Kp` and `Ki` no longer correspond to any consistent loop shape. The result was exactly the shortfall symptom above: the oversized `Kp` slammed the aileron to its ±25 degree limit on every command edge (bang-bang, not smooth tracking), while the undersized `Ki` left roughly 65% steady-state error even after a full 10-second hold. Using `pidtune`'s actual output at its original bandwidth — no rescaling — fixed it outright: 1.9% steady-state error, no bang-bang, and the full 10-degree command it was always supposed to fly. No bigger commanded angle needed.
-
-### Why pitch still isn't instant
-
-Fixing the roll gains raised an honest question: with clean, unscaled gains, does pitch reach its 0.5-degree command quickly too? Not quite. It gets close within a couple of seconds, but the approach isn't a clean snap-and-settle — it overshoots slightly, dips back, and only fully relaxes onto the command over several more seconds. Pushing the gain harder doesn't fix this; it trades the lag for more visible overshoot instead of a genuinely faster clean response.
-
-The reason is a second aerodynamic mode that roll mostly doesn't have to deal with: FT-1's phugoid, the slow trade-off between speed and altitude present in some form on every fixed-wing aircraft, sits at roughly 0.58 rad/s with only about 4% damping open-loop — barely damped at all. A pure attitude-feedback loop's correction has to pass through an extra integration (elevator moves the pitch *rate*, and pitch rate has to integrate into pitch *angle*) before it reaches the state actually being measured, and that lag puts the correction roughly out of phase with the oscillation it's meant to be damping — so it excites the mode about as much as it suppresses it. Roll's fastest mode, by contrast, is already reasonably damped on its own (about 37% open-loop) even before any control law touches it, so once the gain-scaling bug above was fixed, roll's response really is clean. Pitch's slowness isn't a bug still to be found — it's what happens when a single attitude-only loop is asked to control a lightly-damped mode it can only reach indirectly.
-
-### Bug three: the ground vanished
-
-To make the aircraft read bigger on screen, the chase camera's view box got tightened from ±8m to ±4m — but the ground plane's vertical offset (−4.5m at the time) didn't get tightened to match, so it sat entirely outside the visible window and every frame showed nothing but sky. This kind of "changed one thing, forgot the coupled thing" bug is worse to spot than a logic error, because nothing throws an error — the picture just looks wrong.
-
-## Drawing the actual skeleton, not a generic airplane icon
+## Step one for the 3D animation: drawing the actual skeleton, not a generic airplane icon
 
 <ImageList>
   <ImageItem
@@ -97,11 +77,9 @@ The chase camera follows yaw and pitch, but deliberately *not* roll — that's w
 
 A simple fault model sits between the PID and the plant: the controller keeps computing as if the actuator were healthy (there's no fault detection or reconfiguration here — this is for *seeing* a fault, not testing an already-reconfigured controller), but what actually reaches the aircraft, and what anti-windup sees, is the degraded or frozen value. Three colours that can't be confused with each other: healthy (yellow, brightness scaled to actual deflection), half-effectiveness (solid orange, slow pulse), stuck (solid red, faster pulse).
 
-The genuinely interesting result wasn't scripted: once the aileron jams, the bank angle doesn't just sit at whatever it was when it froze — it keeps climbing on its own, because FT-1's spiral mode is already slightly unstable (the honest finding from yesterday's real AVL run — it's right there in [`ft1.avl`](/files/ft1/ft1.avl)'s header). With no aileron correcting it, the aircraft is effectively open-loop on roll, and what's left is exactly what an unstable spiral mode does: the angle keeps climbing. That's not a coincidence — it's the linear dynamics doing, honestly, what they do.
-
 ## What's shipped, and what's still open
 
-[`plots/FT1_flight_animation.mp4`](/videos/ft1/ft1-pid-flight-demo.mp4) — the one embedded above — runs the **fault-free** configuration: the three-colour fault indication is built and tested, but deliberately switched off for today's delivered version, so the aircraft stays healthy throughout. Both gains are now the clean `pidtune` output at their original bandwidths, no rescaling — roll tracks its full 10-degree command to within a fraction of a degree, pitch gets within about 12% of its 0.5-degree command at the peak and is still visibly ringing when the hold ends a few seconds later. That pitch number is a real, understood limit (see "Why pitch still isn't instant" above), not an unexplained one — closing it further needs more than retuning a single loop, and that's the next thing on the list, not something quietly dropped.
+[`plots/FT1_flight_animation.mp4`](/videos/ft1/ft1-pid-flight-demo.mp4) — the one embedded above — runs the **fault-free** configuration: the three-colour fault indication is built and tested, but deliberately switched off for today's delivered version, so the aircraft stays healthy throughout. Both gains are now the clean `pidtune` output at their original bandwidths, no rescaling — roll tracks its full 10-degree command to within a fraction of a degree, pitch reaches about 88% of its 0.5-degree command at the peak and is still visibly ringing when the hold ends a few seconds later.
 
 > **Update, 2026-07-25:** the shared linear model this post's numbers and images were built on had a real bug — a Simulink harness convention silently doubled the strength of every roll/pitch/yaw rate-damping derivative versus what the AVL geometry file actually computes. Fixing it (halving those derivatives back to their correct value) made this airframe genuinely *less* damped than the plots above show, which meant both loops needed retuning: pitch kept its bandwidth (`wc = 1.10 rad/s`) since it was already close to the phugoid-damping limit either way, but roll needed a big bandwidth increase (`wc = 0.15 → 2.00 rad/s`) to recover clean tracking — and came out *better* than before as a result. The response plots and animation frames below are the retuned, post-fix versions; the roll numbers just above are the current ones. (The bug itself was found later, by building an independent nonlinear 6DOF model from the same AVL file and comparing it against this linear one — that's a post of its own, still to come.)
 >
