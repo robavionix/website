@@ -1,6 +1,6 @@
 ---
-title: "FT-1 gets an engine, and the throttle doesn't fly the axis you'd guess"
-description: "Adding a thrust channel meant retiring pitch-attitude-hold for flight-path-angle and speed hold — which turned up a model gap, a reversed actuator pairing an RGA analysis had to prove, a feedforward fix that made things worse, and two real rendering bugs found while watching the result fly."
+title: "FT-1 gets a propeller, for thrust"
+description: "Adding a thrust channel means adding a new longitudinal control channel — to keep the model simple, thrust is aligned exactly with the airframe and isn't meant to control pitch at all. Here it's used purely to hold forward airspeed, offsetting the kinetic/potential energy trade that pitching produces."
 date: 2026-07-24
 image: "/images/ft1-pid-thrust/ft1-thrust-cover.png"
 draft: false
@@ -8,7 +8,7 @@ categories: ["Control Systems"]
 tags: ["PID", "cascade control", "FT-1", "Simulink", "3D visualization", "thrust", "RGA"]
 ---
 
-Every FT-1 controller so far has flown with the engine off — elevator and aileron only, holding pitch and roll attitude, no thrust modeled at all. Today FT-1 gets a nose-mounted propeller, and with it a different question to answer: not "hold this attitude," but hold **flight path angle** (gamma, the climb angle) and **speed** (u) — the two quantities an autopilot with a throttle actually cares about. Roll is untouched. Getting there took a model patch, a actuator pairing that turned out to be backwards from the obvious guess, a fix attempt that made things worse before the real fix was found, and two rendering bugs caught while watching the result fly in 3D.
+Every FT-1 controller so far was designed for unpowered flight — elevator and aileron only, holding pitch and roll attitude, no thrust modeled at all. This post puts a propeller on FT-1, and with it comes a different question: not "hold this attitude," but hold **flight path angle** (gamma, the climb angle) and **speed** (u) — the two quantities an autopilot with a real throttle actually cares about. Roll is untouched. Bringing thrust in meant one change to the model, and one actuator pairing.
 
 <VideoInline
   src="/videos/ft1/ft1-thrust-flight-demo.mp4"
@@ -33,7 +33,7 @@ The low-interaction pairing is **elevator holds speed, throttle holds flight pat
 
 ## A model gap the pairing check exposed
 
-Getting to that RGA result surfaced a real gap first: the shared linearized model has `CD0 = 0` — a known placeholder (no XFOIL polar run yet), not a bug elsewhere, but it means all drag in the model is induced drag, which *decreases* with speed. There's no "faster means more drag" restoring force at all. Consequence: the raw throttle-to-speed gain is about 0.0004 (m/s)/N — a 0.1 m/s speed change would need roughly 250 N of sustained thrust on an airframe whose realistic motor tops out around 6-10 N. Patched with a locally-assumed profile-drag coefficient (`CD0 = 0.045`, typical for a small fixed-gear trainer), converted to a linearized drag derivative and added to the plant's own `u_dot` row — kept entirely inside this project's own files, never written back to the shared trim/linearization. Its main effect is damping the airframe's phugoid mode; it does not fix the throttle-authority problem, which is what led to checking the pairing in the first place.
+Before that RGA result came out, both AVL and Simulink ran into the same wall: the linearized model has `CD0 = 0` — a known placeholder (no XFOIL polar run yet), and neither tool can derive a value for it on its own, but it means all drag in the model is induced drag, which *decreases* with speed. There's no "faster means more drag" restoring force at all. Consequence: the raw throttle-to-speed gain is about 0.0004 (m/s)/N — a 0.1 m/s speed change would need roughly 250 N of sustained thrust on an airframe whose realistic motor tops out around 6-10 N. Patched with a locally-assumed profile-drag coefficient (`CD0 = 0.045`, typical for a small fixed-gear trainer), converted to a linearized drag derivative and added to the plant's own `u_dot` row — kept entirely inside this project's own files, never written back to the shared trim/linearization. Its main effect is damping the airframe's phugoid mode; it does not fix the throttle-authority problem, which is what led to checking the pairing in the first place.
 
 ## Three loops, two different shapes
 
@@ -64,7 +64,7 @@ The real fix wasn't a controller change at all — it was realizing the flight-p
 
 ![Speed hold step response: 0.3 m/s command, elevator deflection history](/images/ft1-pid-thrust/ft1-thrust-u-response.png)
 
-Gamma settles to within 0.07% of a 3-degree command, essentially zero overshoot, peak throttle 1.03 N against a ±3 N budget. Speed settles to within 0.1% of a 0.3 m/s command with only about 7 degrees of elevator once it starts from an already-settled state. Roll gets the same steady-state error and ringing the cascade design already established (see the update note below for the current numbers) — unaffected by any of the above, exactly as the lateral-decoupling check said it should be.
+Gamma settles to within 0.07% of a 3-degree command, essentially zero overshoot, peak throttle 1.03 N against a ±3 N budget. Speed settles to within 0.1% of a 0.3 m/s command with only about 7 degrees of elevator once it starts from an already-settled state. Roll gets the same steady-state error and ringing the cascade design already established — unaffected by any of the above, exactly as the lateral-decoupling check said it should be.
 
 <ImageList>
   <ImageItem
@@ -78,19 +78,3 @@ Gamma settles to within 0.07% of a 3-degree command, essentially zero overshoot,
     imageAlt="Elevator visibly working to hold speed constant during the climb"
   />
 </ImageList>
-
-## Two real bugs found while watching it fly
-
-Extending the design to the full 12-state model and the same 3D animation pipeline from earlier posts turned up two rendering bugs that had nothing to do with the control law — worth writing up because both were caught by actually looking at the video, not by inspecting numbers.
-
-**The ground vanished right after the climb command.** The ground patch's vertical position was only ever set once, never updated per frame — fine when altitude wanders half a meter, as in earlier posts' demos, but this climb is a real ~65 meters, and the ground fell out of the chase camera's view window within seconds. Fixed by re-centering the ground's height on the aircraft's current altitude every frame, the same way its horizontal position already was.
-
-**A triangular "mountain" appeared in the ground once the aircraft's heading had rotated far enough.** (The uncorrected roll pulse turns the aircraft by design — a 10-degree bank held 15 seconds works out to about 113 degrees of heading change by the standard coordinated-turn formula, nothing here feeds rudder to stop it.) First guess was that the ground polygon was too large and hitting a rendering precision limit — wrong, confirmed by shrinking it 10x with zero change to the artifact's shape, which meant the visible edge was never the polygon's own boundary. The actual cause: the scene was rendering in MATLAB's default *orthographic* projection, where a flat plane never perspective-converges to a horizon — it just gets clipped to whatever the axis limits are, and this scene sets a tiny animated zoom box around the aircraft every frame. At headings aligned with that box's own axes the clip happens to look like a flat line; at an oblique heading it cuts across the ground diagonally. Fixed by switching to real perspective projection and letting the ground patch render unclipped and effectively enormous, so its horizon comes from genuine perspective convergence instead of an incidental clipping-box coincidence.
-
-## What's still open
-
-The elevator/throttle cross-coupling is smaller now, not gone — a much larger or faster flight-path command would still stress the elevator loop, since this is still two independent SISO loops reacting to a shared disturbance, not a true energy-based decoupler blending both actuators together (the standard TECS design). And `CD0 = 0.045` is still an assumption, not a measurement — the honest fix is running the airfoil polar this project has been waiting on since day one, not a better guess.
-
-> **Update, 2026-07-25:** the shared linear model this whole design sits on had a real bug — found while independently verifying it against a from-scratch nonlinear 6DOF model — a Simulink harness convention was silently doubling every roll/pitch/yaw rate-damping derivative versus what AVL actually computes. Fixed at the source, which makes this airframe genuinely lighter-damped than assumed here: the phugoid's open-loop damping ratio (with the `CD0` patch above included) drops from about 0.18 to about 0.12. The elevator inner loop turned out robust to this — `Kp_inner = -120` still gives essentially the same damping as before, so it didn't need to change. The throttle/gamma loop wasn't so lucky: its old bandwidth (`wc = 0.8 rad/s`) turned out to sit almost exactly on the corrected plant's phugoid frequency, which sent `pidtune` down a much slower, badly-behaved solution branch — moving to `wc = 1.10 rad/s` recovered the same clean, fast response shown above. Roll's gains carried over from the cascade post's own retune (`Kp_inner: 4 → 3`). All three loops came out tracking about as well as before, sometimes better — gamma, speed, and the elevator/throttle numbers above are all essentially unchanged; the plots and animation frames in this post are the retuned, post-fix versions.
->
-> **Update, 2026-07-29:** a second, more fundamental bug was found: AVL's `CONTROL` derivatives are reported per **degree**, not per radian like the rest of AVL's output, but the shared trim/linearize script — and every gain in this post — treated them as per-radian. Every control surface was modeled 57.3x weaker than it really is, compensated by gains tuned 57.3x too high. Closed-loop tracking was accidentally close to right regardless, but every deflection number above was wrong — including the "peak elevator 18 degrees, comfortably inside the ±25 rail" framing that runs through this whole post. Re-tuned against the corrected plant and re-run at the same command sizes (3° gamma, 0.3 m/s, 10° roll): gamma settles to 3.000° (cmd 3.0°), u to 0.2992 m/s (cmd 0.30), phi to 10.000° (cmd 10.0°) — essentially unchanged tracking quality. What did change: peak elevator is now just **0.19°** and peak aileron **0.53°** (0.8% and 2.1% of the ±25° limit), peak throttle 1.15 N — nothing here is anywhere near its rail anymore, which also means the "Coupling finding" section above (elevator transiently pinned without reference shaping) would need a much bigger, currently-untested command to reproduce on the corrected plant. The plots and animation below are the corrected versions.
