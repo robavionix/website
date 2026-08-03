@@ -1,11 +1,18 @@
 ---
-title: "The linear model FT-1's autopilots were designed on, checked against the real nonlinear equations — twice"
+title: The linear model FT-1's autopilots were designed on, checked against the real nonlinear equations — twice
 description: "Every FT-1 controller so far was designed on a linearized 12-state model. This is the check that model actually deserved: a genuine Simulink nonlinear airframe and an independently hand-derived one, both released from the same disturbance and compared against the linear model — plus what the aircraft does if nobody's flying it at all."
 date: 2026-07-29
-image: "/images/ft1-nonlinear-verify/ft1-compare-lat.png"
+image: /images/ft1-nonlinear-verify/ft1-compare-lat.png
 draft: false
-categories: ["Verification & Validation"]
-tags: ["AVL", "Simulink", "nonlinear dynamics", "FT-1", "6DOF", "verification"]
+categories:
+  - Verification & Validation
+tags:
+  - AVL
+  - Simulink
+  - nonlinear dynamics
+  - FT-1
+  - 6DOF
+  - verification
 ---
 
 Every FT-1 controller posted so far — single-loop, cascade, gamma/speed-hold — was designed against one thing: a 12-state model produced by linearizing a Simulink airframe about straight-and-level trim. Linearizing is a small-signal approximation by construction; nothing in the design process so far had checked whether the real, nonlinear aircraft actually agrees with it. This post is that check, done two different ways, plus an answer to a question none of the controller posts needed to ask: what does FT-1 do with nobody flying it at all?
