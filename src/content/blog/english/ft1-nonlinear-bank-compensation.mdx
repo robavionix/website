@@ -15,7 +15,7 @@ tags:
   - flight control
 ---
 
-The [previous post](/blog/ft1-nonlinear-verification/) compared FT-1's linearized model against a nonlinear 6-DOF one and found them to agree. That was a check on the *model*. This post is the obvious next question: the gamma/speed-hold PID from the [thrust post](/blog/ft1-thrust-gamma-speed-hold/) was designed entirely against the linear model — does it still fly the nonlinear aircraft?
+The [previous post](/blog/ft1-nonlinear-verification/) compared FT-1's linearized model against a nonlinear 6-DOF one and found them to agree. That was a check on the *model*. This post takes it a step further, using the linear-model controller to actually fly the nonlinear 6-DOF model: the gamma/speed-hold PID from the [thrust post](/blog/ft1-thrust-gamma-speed-hold/) was designed entirely against the linear model — carried over as-is, does it control the nonlinear aircraft well?
 
 Mostly, yes. The controller transfers essentially unchanged: flight-path angle settles to 3.005° against a 3° command, speed to 0.2983 m/s against 0.30, bank to 10.000° against 10°, and nothing saturates — peak elevator 0.92° of the 25° available, peak aileron 4.15°, peak throttle 1.271 N of a ±3 N budget. Those numbers sit right on top of what the same controller does on the linear model it was designed against.
 
@@ -23,25 +23,26 @@ Then you ask it to bank, and something is clearly wrong.
 
 ## A 10-degree turn should not cost 16% of your airspeed
 
-Commanding a 10° bank made the airspeed swing from 13.0 m/s to 15.1 — **2.11 m/s, or 16.2% of trim speed**. It recovers, so the loop is stable, but the number is absurd on its face. Work out what a level 10° turn actually requires:
+Commanding a 10° bank made the airspeed swing from 13.0 m/s to 15.1 — **2.11 m/s, or 16.2% of trim speed**. It recovers, so the loop is stable, but the number is absurd on its face. A normal aircraft turning in flight should not see airspeed swing this much. Work out what a level 10° turn actually requires:
 
 A banked turn needs the lift's vertical component to still carry the weight, so `L·cos φ = W`, i.e. load factor `n = sec φ`. At 10°, `sec 10° = 1.015` — you need **1.5% more lift**. Lift goes as V², so if you produce that lift purely by flying faster, speed only has to rise by `√1.015 = 0.77%`, which is **0.10 m/s**.
 
-The simulation was moving 20 times that. So this wasn't the physics of turning; it was the controller.
+The simulation's result was 20 times that. So this wasn't the physics of turning; it was the controller.
 
 ## The cause: nothing in the architecture asks for lift
 
 Instrumenting the run makes the mechanism plain:
-```
 
-   t      phi        V        dV    gamma    alpha    thr N
-  10.0    0.00   13.000    0.000    -0.00     0.09    0.000
-  12.0    7.92   13.318    0.318    -0.46    -0.15    0.515   <- gamma dips, throttle comes up
-  15.0    9.71   14.666    1.666    -0.56    -0.95    0.462   <- speed overshoots to +1.67
-  20.0    9.99   14.332    1.332     1.15    -0.77   -0.602
-  24.0   10.00   13.194    0.194    -0.09    -0.04   -0.065   <- settles near the theoretical +0.1
+| t (s) | φ (°) | V (m/s) | ΔV (m/s) | γ (°) | α (°) | throttle (N) |
+|---|---|---|---|---|---|---|
+| 10.0 | 0.00 | 13.000 | 0.000 | −0.00 | 0.09 | 0.000 |
+| 12.0 | 7.92 | 13.318 | 0.318 | −0.46 | −0.15 | 0.515 |
+| 15.0 | 9.71 | 14.666 | 1.666 | −0.56 | −0.95 | 0.462 |
+| 20.0 | 9.99 | 14.332 | 1.332 | 1.15 | −0.77 | −0.602 |
+| 24.0 | 10.00 | 13.194 | 0.194 | −0.09 | −0.04 | −0.065 |
 
-````markdown
+At t=12 gamma starts to dip and throttle comes up in response; at t=15 speed overshoots to a peak of +1.67 m/s; by t=24 it has settled near the theoretical +0.1.
+
 Sideslip peaks at only 1.28°, so this is not adverse yaw from the ailerons. The chain is:
 
 > bank → vertical lift component drops → γ dips 0.86° → **the γ loop's only actuator is the throttle, so it adds thrust** → thrust does not make lift, it makes speed → the aircraft accelerates until `L ∝ V²` restores the lift → γ recovers, and the aircraft is now flying 2 m/s fast.
@@ -57,47 +58,47 @@ Real autopilots have this — it goes by names like bank compensation or turn pi
 ```matlab
 n_extra   = 1/max(cos(phi), 0.2) - 1;              % = sec(phi) - 1
 q_cmd_raw = Kp_u*e_u + int_u + q_ff*dgcmd_f + k_bank*n_extra;
-````
+```
 
-The counter-intuitive part is why adding a constant to a \*rate\* command does not make the aircraft rotate forever. It does not, because \`G_q\` (elevator → pitch rate) \*\*has a zero at the origin\*\*: a constant elevator deflection produces zero steady-state pitch rate — it produces a new trim attitude instead. So at equilibrium \`q → 0\` and \`ele_ss = Kp_inner · q_cmd\`. A constant \`q_cmd\` is really a constant \*elevator bias\*, which is a constant angle-of-attack and lift increment. It is the same mechanism the speed loop's own integrator already uses.
+The counter-intuitive part is why adding a constant to a *rate* command does not make the aircraft rotate forever. It does not, because `G_q` (elevator → pitch rate) **has a zero at the origin**: a constant elevator deflection produces zero steady-state pitch rate — it produces a new trim attitude instead. So at equilibrium `q → 0` and `ele_ss = Kp_inner · q_cmd`. A constant `q_cmd` is really a constant *elevator bias*, which is a constant angle-of-attack and lift increment. It is the same mechanism the speed loop's own integrator already uses.
 
-Measured at 10° bank with \`k_bank = 2\`:
+Measured at 10° bank with `k_bank = 2`:
 
-| | elevator | \*\*α\*\* | \*\*V\*\* | γ | throttle |
+| | elevator | **α** | **V** | γ | throttle |
 |---|---|---|---|---|---|
-| \`k_bank = 0\` | 1.112° | \*\*−0.772°\*\* | \*\*14.332\*\* | 1.155° | −0.602 N |
-| \`k_bank = 2\` | 0.557° | \*\*+0.262°\*\* | \*\*12.878\*\* | −0.087° | 0.025 N |
+| `k_bank = 0` | 1.112° | **−0.772°** | **14.332** | 1.155° | −0.602 N |
+| `k_bank = 2` | 0.557° | **+0.262°** | **12.878** | −0.087° | 0.025 N |
 
 The aircraft picks up about a degree of α, makes the lift with attitude instead of speed, and the throttle — which had been swinging ±0.6 N — goes quiet at 0.025 N.
 
 ![Bank compensation, before and after: bank angle, airspeed, flight-path angle and altitude for 10 and 30 degree bank commands with k_bank = 0 and k_bank = 2](/images/ft1-nlmodel-bank/FT1_NL_kbank_before_after.png)
 
-## Choosing the gain, and being honest about it
+## Choosing the gain
 
 A sweep at both bank angles:
 
-| \`k_bank\` | 10° bank max|dV| | 30° bank max|dV| |
+| `k_bank` | 10° bank max\|dV\| | 30° bank max\|dV\| |
 |---|---|---|
-| 0 | 2.110 m/s (16.2%) | 19.34 m/s (148.7%) — \*\*departed\*\* |
+| 0 | 2.110 m/s (16.2%) | 19.34 m/s (148.7%) — **departed** |
 | 1.0 | 0.859 (6.6%) | 4.83 (37.2%) |
-| \*\*2.0\*\* | \*\*0.182 (1.4%)\*\* | \*\*1.49 (11.4%)\*\* |
+| **2.0** | **0.182 (1.4%)** | **1.49 (11.4%)** |
 | 3.0 | 1.067 (8.2%) | 7.54 (58.0%) |
-| 4.0 | 2.083 (16.0%) | 19.38 — \*\*departed\*\* |
+| 4.0 | 2.083 (16.0%) | 19.38 — **departed** |
 
-\`k_bank = 2\` is a genuine interior optimum at both amplitudes, not a boundary pick. Push it further and the over-compensation bleeds speed, the speed loop fights back harder, and at 30° it departs again.
+`k_bank = 2` is the optimum at both amplitudes. Push it further and the over-compensation bleeds speed, the speed loop fights back harder, and at 30° it departs again.
 
-One thing worth stating plainly: \*\*this gain is about 20× larger than a static feedforward calculation says it should be.\*\* The lift arithmetic asks for roughly 0.04° of elevator at 10° bank; what actually works is 0.88°. The reason is that the term is not acting alone — the extra induced drag bleeds a little speed, the speed loop sees it and pitches \*down\* to recover, and that partially cancels the compensation. So \`k_bank\` is a closed-loop tuned gain, not an open-loop feedforward, and it would need retuning if the trim point or the speed-loop gains moved. A cleaner design would feed the load-factor demand into a normal-acceleration inner loop, where the gain would have a real physical meaning and the speed loop would not fight it the same way.
+**This gain is about 20× larger than a static feedforward calculation says it should be.** The lift arithmetic asks for roughly 0.04° of elevator at 10° bank; what actually works is 0.88°. The reason is that the term is not acting alone — the extra induced drag bleeds a little speed, the speed loop sees it and pitches *down* to recover, and that partially cancels the compensation. So `k_bank` is a closed-loop tuned gain, not an open-loop feedforward, and it would need retuning if the trim point or the speed-loop gains moved. A cleaner design would feed the load-factor demand into a normal-acceleration inner loop, where the gain would have a real physical meaning and the speed loop would not fight it the same way.
 
-## The 30-degree case: this was never an aileron problem
+## The 30-degree case is more involved — this isn't an aileron problem
 
-The most useful result came from a bank the aircraft could not previously hold at all. At 30°, the uncompensated aircraft \*\*departed at t = 18.3 s\*\* — airspeed running from 13 to 32.7 m/s, 29 m of altitude lost, sideslip through 20°.
+At 30°, the uncompensated aircraft **departed at t = 18.3 s** — airspeed running from 13 to 32.7 m/s, 29 m of altitude lost, sideslip through 20°.
 
-It is tempting to read that as running out of roll authority. It is not. Two controlled experiments:
+It is tempting to read that as running out of roll authority. That is not actually the cause. Two controlled experiments:
 
-- Raising the throttle limit from 3 N to \*\*15 N does not help\*\* — it still departs, at 17.5 s, still reaching 32.7 m/s. You cannot fix a lift deficit with thrust.
-- Halving the roll loop's inner gain makes it survive — but that is a symptom, not the cause. At 32.7 m/s the dynamic pressure is \*\*6.3× trim\*\*, so the roll loop's effective gain is \~6.3× what it was designed for and it crosses its stability boundary. The gains are perfectly fine at 13 m/s; the uncompensated bank is what let the aircraft accelerate into the region where they are not.
+- Raising the throttle limit from 3 N to **15 N does not help** — it still departs, at 17.5 s, still reaching 32.7 m/s. You cannot fix a lift deficit with thrust.
+- Halving the roll loop's inner gain makes it survive — but that is a symptom, not the cause. At 32.7 m/s the dynamic pressure is **6.3× trim**, so the roll loop's effective gain is ~6.3× what it was designed for and it crosses its stability boundary. The gains are perfectly fine at 13 m/s; the uncompensated bank is what let the aircraft accelerate into the region where they are not.
 
-With \`k_bank = 2\` the 30° case simply works: airspeed peaks at 14.5 m/s instead of 32.7, and the bank is held for the full command.
+With `k_bank = 2` the 30° case simply works: airspeed peaks at 14.5 m/s instead of 32.7, and the bank is held for the full command.
 
 ![Why a sustained 30 degree bank is a lift deficit: flight-path angle, airspeed and altitude for healthy and jammed-aileron cases](/images/ft1-nlmodel-bank/FT1_NL_bank_energy.png)
 
@@ -108,12 +109,8 @@ With \`k_bank = 2\` the 30° case simply works: airspeed peaks at 14.5 m/s inste
   title="FT-1 holding a 30 degree bank on the nonlinear model with bank-angle compensation active"
 />
 
-## What this actually says
+## What this simulation actually says
 
-The controller transferred to the nonlinear aircraft almost unchanged, which is a real result — the linear-model design was sound. What it did \*not\* carry was an assumption nobody had written down: that the aircraft would not be asked to hold a bank for any length of time. A small-signal design about straight-and-level trim has no reason to include a \`sec φ\` term, and the linear model has no way to punish its absence.
+The controller transferred to the nonlinear aircraft almost unchanged, and in most cases a design built and validated on the linear model carries over to the nonlinear one and can be reused as-is. The cases where it can't carry over cleanly tend to show up exactly where coupling appears: in the linearized model, the longitudinal and lateral states are strictly separated, so any coupling that would actually arise gets erased from the model by construction. That is exactly why a nonlinear 6-DOF model still has to be tested rigorously, and why reusing a linear-model controller needs care — usually the fix is a small, targeted addition, not a redesign, once the coupling the linear model couldn't show you has been found.
 
-That is the general lesson worth taking from this one. The nonlinear model did not find a \*tuning\* error. It found a \*\*missing term\*\* — something the linearized plant was structurally incapable of revealing, because the effect is second-order in bank angle and the linear model was expanded about zero bank. It is the second time in this project that the check found something the thing being checked could not have found on its own.
-
-There is also a validity boundary worth marking. Where these runs are called "departed", the aircraft is at 2.5× trim speed with 20° of sideslip, well outside the envelope the AVL derivatives were computed for — a linear expansion about a 13 m/s trim point with no stall model. Treat those as a reliable indicator that \*\*the control design fails there\*\*, not as a prediction of what the real aircraft does afterwards.
-
-```markdown
+There is also a validity boundary worth marking. Where these runs are called "departed", the aircraft is at 2.5× trim speed with 20° of sideslip, well outside the envelope the AVL derivatives were computed for — a linear expansion about a 13 m/s trim point with no stall model. Treat those as a reliable indicator that **the control design fails there**, not as a prediction of what the real aircraft does afterwards.

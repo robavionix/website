@@ -19,19 +19,9 @@ Every FT-1 model so far has had one lumped `aileron` input — one number, mirro
 
 ## Six actuators, not four channels
 
-The plant is the same validated nonlinear 6-DOF model from the [previous post](/blog/ft1-nonlinear-bank-compensation/), but driven through its **physical** actuator interface rather than the aerodynamic one:
-```
+The plant is the same validated nonlinear 6-DOF model from the [previous post](/blog/ft1-nonlinear-bank-compensation/), but its lumped four-channel actuator interface is split into six fully independent inputs: `ail_L`, `ail_R`, `ele_L`, `ele_R`, `rudder`, `Th`. The mixing down to AVL's channels (`d_aileron = (ail_R − ail_L)/2`, and so on) happens *inside* the plant, which means each surface upstream of it can fail on its own.
 
-[ ail_L   ail_R   ele_L   ele_R   rudder   Th ]
-
-```markdown
-The mixing down to AVL's channels (`d_aileron = (ail_R − ail_L)/2`, and so on) happens *inside* the plant, which means each surface upstream of it can fail on its own. A fault-injection stage sits between the controller and the aircraft:
-```
-
-[Controller] --surf_cmd(6)--> [FAULT INJECTION] --surf_act(6)--> [Plant]
-
-```markdown
-The controller has no idea a fault has occurred. It keeps computing and commanding normally; the fault stage rewrites what actually reaches the aircraft. That is why the diagnostic view is *commanded versus actual*: the moment those two traces separate is the failure.
+A fault-injection stage sits between the controller and the aircraft: the controller outputs six commands, `surf_cmd`, and the fault stage rewrites them into the six signals, `surf_act`, that actually reach the aircraft. The controller has no idea a fault has occurred — it keeps computing and commanding normally. That is why the diagnostic view is *commanded versus actual*: the moment those two traces separate is the failure.
 
 Three failure modes are available per surface — jammed at a fixed angle, degraded to a fraction of effectiveness, or healthy — each with its own onset time, and several can be active at once.
 
@@ -69,13 +59,7 @@ Same aileron, same aircraft, same command — but jammed at **+15°** instead of
 
 The obvious explanation is that 15° of stuck aileron is simply too much rolling moment to fight. That explanation is wrong, and the surfaces plot is what gives it away: **the surviving aileron never even tries.** It peaks at 2.78° while 25° of throw sits unused.
 
-15° is well inside the actuator's range, and the fault is physically trimmable — the healthy side only needs to hold +15° for the differential to return to zero. The controller cannot get there, and the reason is structural. At steady state the roll rate `p` is zero and the outer loop's rate command is capped by `p_limit`, so the largest surface deflection this cascade can ever *hold* is
-```
-
-ail_cmd_max = Kp_ph_inner × p_limit = 0.06 × 40 deg/s = 2.40°
-
-```markdown
-— not the 25° actuator limit. Sweeping the jam angle puts the boundary exactly on that prediction:
+15° is well inside the actuator's range, and the fault is physically trimmable — the healthy side only needs to hold +15° for the differential to return to zero. The controller cannot get there, and the reason is structural. At steady state the roll rate `p` is zero and the outer loop's rate command is capped by `p_limit`, so the largest surface deflection this cascade can ever *hold* is `Kp_ph_inner × p_limit = 0.06 × 40 deg/s = 2.40°` — not the 25° actuator limit. Sweeping the jam angle puts the boundary exactly on that prediction:
 
 | hardover | outcome |
 |---|---|
@@ -88,39 +72,83 @@ ail_cmd_max = Kp_ph_inner × p_limit = 0.06 × 40 deg/s = 2.40°
 
 Raising the inner gain does not rescue it either: at 0.12 it still departs, and at 0.3–0.6 the aileron rails and it departs *sooner*. A pure-proportional inner rate loop structurally cannot hold a steady offset. Fixing this needs integral action in the inner loop, or explicit fault detection and reallocation — a real design change, not a gain tweak.
 
-## Multiple simultaneous faults, and a surface that lies
+## Three cases that look like they should depart, and don't
 
-Faulting several actuators at once is where the commanded-versus-actual view earns its keep. Below: the right aileron jammed at neutral **and** the right elevator degraded to 30% effectiveness, both at t = 5 s.
+The two cases above make the core point. The three below test its edges: even a total loss of an entire actuator channel is survivable, as long as the frozen actuators land where trim already needed them and the fault is never a hardover.
 
-![Combined fault: right aileron jammed and right elevator at 30 percent effectiveness](/images/ft1-fault-injection/surfaces-combined.png)
+### Both elevators jammed at trim, simultaneously
 
-Each mode has its own signature. `ail_R` shows the command (blue) still swinging ±3° while the actual (red) sits pinned at zero. `ele_R` shows the actual tracking the command's *shape* at exactly 30% of its amplitude — degraded, not dead. Healthy channels show the two traces exactly on top of each other. The aircraft still makes the 10° bank.
+`ele_L` and `ele_R` freeze **together** at trim deflection at t = 5 s — the aircraft loses the pitch channel entirely, and with it the speed loop's only actuator. The commanded profile asks for neither climb nor speed change, and the aircraft holds `phi held = 10.00°`, `max|beta| = 1.28°`, peak speed 13.33 m/s, for the full 50 s — outcome `ok`.
 
-A related case worth flagging: the rudder. This controller never commands rudder at all, so a rudder hardover is a pure disturbance with no loop closed around it. The aircraft survives — but holds **30.7°** of bank against a 10° command, without ever tripping a sideslip limit. That is why the verdict here has three states rather than two: `ok`, `TRACK FAIL` (survived but never met the command), and `DEPARTED`. A two-state pass/fail would have called that one a pass.
+![Both elevators jammed at trim: commanded versus actual for all six actuators](/images/ft1-fault-injection/surfaces-both-elevators-jam.png)
+
+![States with both elevators jammed: the pitch channel has no active control left, but the aircraft holds trim](/images/ft1-fault-injection/states-both-elevators-jam.png)
+
+<VideoInline
+  src="/videos/ft1/ft1-fault-both-elevators-jam.mp4"
+  provider="html5"
+  type="video/mp4"
+  title="FT-1 with both elevators jammed at trim, the pitch channel with no active control, holding trim"
+/>
+
+This one looks like it should be serious — the longitudinal channel has zero authority left — but the mechanism is the same one that saves the jammed aileron: **the frozen position is the position trim already needed.** The aircraft does not need an active pitch command to hold its current state, so losing the actuator that would have supplied one costs nothing. The genuinely dangerous case is not "losing an actuator"; it is the next section — an actuator frozen somewhere trim did *not* need.
+
+### Throttle stuck at trim thrust
+
+Throttle freezes at trim thrust at t = 5 s, and the flight-path-angle loop loses its only actuator. Again because the profile asks for no speed change or climb, the aircraft holds `phi held = 10.00°`, `max|beta| = 1.28°`, peak speed 13.27 m/s — `ok`.
+
+![Throttle stuck at trim thrust: commanded versus actual for all six actuators](/images/ft1-fault-injection/surfaces-throttle-stuck.png)
+
+![States with throttle stuck at trim thrust: the gamma loop has no actuator left, but the aircraft holds trim](/images/ft1-fault-injection/states-throttle-stuck.png)
+
+<VideoInline
+  src="/videos/ft1/ft1-fault-throttle-stuck.mp4"
+  provider="html5"
+  type="video/mp4"
+  title="FT-1 with throttle stuck at trim thrust, the gamma loop with no actuator left, holding trim flight"
+/>
+
+This is the same story as engine-out, told twice: **a manoeuvre profile with no energy demand can never expose an energy-actuator failure.** Throttle frozen at trim and throttle at zero look identical on this level 10° bank. The case that would actually test this fault is one that asks for active acceleration or a climb — not the demonstration profile used here.
+
+### Combined fault: aileron jammed plus elevator degraded
+
+The only case in this set with two genuinely different failure modes active at once: the right aileron jams at neutral at t = 5 s **while** the right elevator degrades to 30% effectiveness at the same instant. The aircraft holds `phi held = 10.00°`, `max|beta| = 1.12°`, peak speed 13.00 m/s — `ok`.
+
+![Combined fault, detailed view: right aileron jammed and right elevator at 30 percent effectiveness, commanded versus actual for all six actuators](/images/ft1-fault-injection/surfaces-combined-detail.png)
+
+![States under the combined fault: two channels degraded at once, and the bank command is still tracked](/images/ft1-fault-injection/states-combined-detail.png)
+
+<VideoInline
+  src="/videos/ft1/ft1-fault-combined.mp4"
+  provider="html5"
+  type="video/mp4"
+  title="FT-1 with the right aileron jammed at neutral and the right elevator degraded to 30 percent, still tracking the bank command"
+/>
+
+The commanded-versus-actual view earns its keep here. `ail_R`'s command (blue) keeps swinging, while its actual (red) sits pinned at zero — that is *death*, the same signature as the standalone aileron jam, survived on the healthy side's halved differential. `ele_R`'s actual tracks the command's *shape* but at exactly 30% of its amplitude — that is *attenuation*, not silence; the pitch channel still has feedback, just at a discounted gain. The two failure modes coexist in the same window without interacting, and the aircraft still makes the 10° bank. The lesson is to read each channel's commanded-versus-actual trace on its own, rather than judging the whole aircraft by whether it diverges.
 
 ## Results across the set
 
 Twelve configurations — one healthy baseline and eleven faults — with a 10° bank commanded at t = 10–25 s and the fault injected at t = 5 s:
-```
 
- #   fault                            phi held  max|beta|   max V  t_end  outcome
- 1   healthy                             10.00       1.29   13.15   50.0  ok
- 2   ail_R jam at neutral                10.00       1.09   13.14   50.0  ok
- 3   ail_R hardover +15 deg                NaN       9.70   14.06    6.4  DEPARTED
- 4   ail_R 50% effectiveness             10.00       1.20   13.15   50.0  ok
- 5   ele_R jam at trim                   10.00       1.29   13.07   50.0  ok
- 6   both elevators jam at trim          10.00       1.28   13.33   50.0  ok
- 7   rudder hardover +10 deg             30.67      13.00   20.66   50.0  TRACK FAIL
- 8   throttle stuck at trim              10.00       1.28   13.27   50.0  ok
- 9   ail_L hardover -20 deg                NaN      12.85   13.55    9.0  DEPARTED
- 10  both ailerons jammed                 0.00       0.00   13.00   50.0  TRACK FAIL
- 11  engine out                          10.00       1.32   13.60   50.0  ok
- 12  combined: ail_R jam + ele_R 30%     10.00       1.12   13.00   50.0  ok
+| # | fault | phi held | max\|β\| | peak V | t end | outcome |
+|---|---|---|---|---|---|---|
+| 1 | healthy | 10.00° | 1.29° | 13.15 | 50.0 s | ok |
+| 2 | ail_R jam at neutral | 10.00° | 1.09° | 13.14 | 50.0 s | ok |
+| 3 | ail_R hardover +15° | departed | 9.70° | 14.06 | 6.4 s | DEPARTED |
+| 4 | ail_R 50% effectiveness | 10.00° | 1.20° | 13.15 | 50.0 s | ok |
+| 5 | ele_R jam at trim | 10.00° | 1.29° | 13.07 | 50.0 s | ok |
+| 6 | **both elevators jam at trim** | 10.00° | 1.28° | 13.33 | 50.0 s | ok |
+| 7 | rudder hardover +10° | 30.67° | 13.00° | 20.66 | 50.0 s | TRACK FAIL |
+| 8 | **throttle stuck at trim** | 10.00° | 1.28° | 13.27 | 50.0 s | ok |
+| 9 | ail_L hardover −20° | departed | 12.85° | 13.55 | 9.0 s | DEPARTED |
+| 10 | both ailerons jammed | 0.00° | 0.00° | 13.00 | 50.0 s | TRACK FAIL |
+| 11 | engine out | 10.00° | 1.32° | 13.60 | 50.0 s | ok |
+| 12 | **combined: ail_R jam + ele_R 30%** | 10.00° | 1.12° | 13.00 | 50.0 s | ok |
 
-```markdown
-**Both departures are hardovers. Not one jam-at-neutral departs.** That split is the whole finding, and it is a property of the controller's structure, not of how much authority the airframe has left.
+**Both departures are hardovers. Not one jam-at-neutral or jam-at-trim departs.** That split is the whole finding, and it is a property of the controller's structure, not of how much authority the airframe has left. Row 7, the rudder, is `TRACK FAIL` rather than `DEPARTED` for a different reason: this controller never commands rudder at all, so a rudder hardover is a pure disturbance with no loop closed around it. The aircraft survives — but holds 30.67° of bank against a 10° command, without ever tripping a sideslip limit. That is why the verdict here has three states rather than two: `ok`, `TRACK FAIL` (survived but never met the command), and `DEPARTED`.
 
-Two honest caveats on this table. Preset 4 is a weak test — halving one aileron's effectiveness barely perturbs an aircraft with this much margin at 10° bank, so it proves little. And preset 11 ("engine out") looks benign only because the demo profile asks for no climb and no speed change; an engine failure with no energy demand is close to a non-event by construction. Both would need a more demanding manoeuvre to say anything real.
+Two honest caveats on this table. Preset 4 is a weak test — halving one aileron's effectiveness barely perturbs an aircraft with this much margin at 10° bank, so it proves little. Presets 6, 8, and 11 all share the same limitation for the opposite reason: they remove an actuator whose channel the demo profile never actually calls on, so the fault is close to a non-event by construction. All of these would need a more demanding manoeuvre — active climb, acceleration, or deceleration — to say anything real.
 
 ## Where the model stops being trustworthy
 
