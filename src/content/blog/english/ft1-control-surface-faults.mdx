@@ -1,5 +1,5 @@
 ---
-title: "FT-1: what actually happens when a control surface jams"
+title: 'FT-1: what actually happens when a control surface jams'
 description: "A testbed that fails FT-1's control surfaces one at a time — each aileron, each elevator half, the rudder, the throttle — and watches what the autopilot does about it. The results are not what the fault-tolerance literature primes you to expect: a jammed aileron is close to a non-event, while a hardover of the same surface departs the aircraft in six seconds. The difference turns out to be a property of the controller, not the airframe."
 date: 2026-08-03
 image: /images/ft1-fault-injection/surfaces-combined.png
@@ -20,17 +20,17 @@ Every FT-1 model so far has had one lumped `aileron` input — one number, mirro
 ## Six actuators, not four channels
 
 The plant is the same validated nonlinear 6-DOF model from the [previous post](/blog/ft1-nonlinear-bank-compensation/), but driven through its **physical** actuator interface rather than the aerodynamic one:
-
 ```
+
 [ ail_L   ail_R   ele_L   ele_R   rudder   Th ]
-```
 
+```markdown
 The mixing down to AVL's channels (`d_aileron = (ail_R − ail_L)/2`, and so on) happens *inside* the plant, which means each surface upstream of it can fail on its own. A fault-injection stage sits between the controller and the aircraft:
-
 ```
+
 [Controller] --surf_cmd(6)--> [FAULT INJECTION] --surf_act(6)--> [Plant]
-```
 
+```markdown
 The controller has no idea a fault has occurred. It keeps computing and commanding normally; the fault stage rewrites what actually reaches the aircraft. That is why the diagnostic view is *commanded versus actual*: the moment those two traces separate is the failure.
 
 Three failure modes are available per surface — jammed at a fixed angle, degraded to a fraction of effectiveness, or healthy — each with its own onset time, and several can be active at once.
@@ -70,11 +70,11 @@ Same aileron, same aircraft, same command — but jammed at **+15°** instead of
 The obvious explanation is that 15° of stuck aileron is simply too much rolling moment to fight. That explanation is wrong, and the surfaces plot is what gives it away: **the surviving aileron never even tries.** It peaks at 2.78° while 25° of throw sits unused.
 
 15° is well inside the actuator's range, and the fault is physically trimmable — the healthy side only needs to hold +15° for the differential to return to zero. The controller cannot get there, and the reason is structural. At steady state the roll rate `p` is zero and the outer loop's rate command is capped by `p_limit`, so the largest surface deflection this cascade can ever *hold* is
-
 ```
+
 ail_cmd_max = Kp_ph_inner × p_limit = 0.06 × 40 deg/s = 2.40°
-```
 
+```markdown
 — not the 25° actuator limit. Sweeping the jam angle puts the boundary exactly on that prediction:
 
 | hardover | outcome |
@@ -101,8 +101,8 @@ A related case worth flagging: the rudder. This controller never commands rudder
 ## Results across the set
 
 Twelve configurations — one healthy baseline and eleven faults — with a 10° bank commanded at t = 10–25 s and the fault injected at t = 5 s:
-
 ```
+
  #   fault                            phi held  max|beta|   max V  t_end  outcome
  1   healthy                             10.00       1.29   13.15   50.0  ok
  2   ail_R jam at neutral                10.00       1.09   13.14   50.0  ok
@@ -116,8 +116,8 @@ Twelve configurations — one healthy baseline and eleven faults — with a 10°
  10  both ailerons jammed                 0.00       0.00   13.00   50.0  TRACK FAIL
  11  engine out                          10.00       1.32   13.60   50.0  ok
  12  combined: ail_R jam + ele_R 30%     10.00       1.12   13.00   50.0  ok
-```
 
+```markdown
 **Both departures are hardovers. Not one jam-at-neutral departs.** That split is the whole finding, and it is a property of the controller's structure, not of how much authority the airframe has left.
 
 Two honest caveats on this table. Preset 4 is a weak test — halving one aileron's effectiveness barely perturbs an aircraft with this much margin at 10° bank, so it proves little. And preset 11 ("engine out") looks benign only because the demo profile asks for no climb and no speed change; an engine failure with no energy demand is close to a non-event by construction. Both would need a more demanding manoeuvre to say anything real.
