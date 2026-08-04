@@ -21,9 +21,9 @@ Mostly, yes. The controller transfers essentially unchanged: flight-path angle s
 
 Then you ask it to bank, and something is clearly wrong.
 
-## A 10-degree turn should not cost 16% of your airspeed
+## A 10-degree turn: airspeed swinging to a 16% deviation
 
-Commanding a 10° bank made the airspeed swing from 13.0 m/s to 15.1 — **2.11 m/s, or 16.2% of trim speed**. It recovers, so the loop is stable, but the number is absurd on its face. A normal aircraft turning in flight should not see airspeed swing this much. Work out what a level 10° turn actually requires:
+Commanding a 10° bank made the airspeed swing from 13.0 m/s to 15.1 — **2.11 m/s, or 16.2% of trim speed**. It recovers, so the system is stable overall, but the number is absurd on its face. A normal aircraft turning in flight should not see airspeed swing this much. Work out what a level 10° turn actually requires:
 
 A banked turn needs the lift's vertical component to still carry the weight, so `L·cos φ = W`, i.e. load factor `n = sec φ`. At 10°, `sec 10° = 1.015` — you need **1.5% more lift**. Lift goes as V², so if you produce that lift purely by flying faster, speed only has to rise by `√1.015 = 0.77%`, which is **0.10 m/s**.
 
