@@ -1,6 +1,6 @@
 ---
 title: "FT-1: flying the nonlinear model with the linear model's controller"
-description: "The previous post checked FT-1's linear model against a nonlinear one. This post closes the loop: take the gamma/speed-hold PID designed entirely on the linear model, wrap it around the real nonlinear 6-DOF aircraft, and see what breaks. It mostly works — until you ask for a bank. One extra term, scheduled on bank angle, takes the airspeed excursion in a turn from 16% down to 1.4% and turns a departure into a stable 30-degree turn."
+description: "The previous post verified FT-1's linear and nonlinear models agree. This one closes the loop: the flight-path-angle (γ)/airspeed (V) hold PID designed on the linear model, applied to the real nonlinear 6-DOF airframe. It performs well across most maneuvers, but commanding a bank angle (φ) turn produces a clear airspeed deviation — the architecture has no load-factor (n = sec φ) compensation for bank, so the γ loop's only actuator, throttle, recovers lift passively via L∝V² by accelerating rather than increasing angle of attack (α) directly. A φ-scheduled feedforward pitch compensation term cuts the airspeed deviation in a 10° bank from 16% to 1.4%, and stabilizes the case that previously diverged at 30°."
 date: 2026-08-03
 image: /images/ft1-nlmodel-bank/FT1_NL_kbank_before_after.png
 draft: false
