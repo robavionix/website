@@ -57,9 +57,9 @@ Same aileron, same aircraft, same command — but jammed at **+15°** instead of
   title="FT-1 with the right aileron jammed hardover at 15 degrees, departing 6.4 seconds after the fault"
 />
 
-The obvious explanation is that 15° of stuck aileron is simply too much rolling moment to fight. That explanation is wrong, and the surfaces plot is what gives it away: **the surviving aileron never even tries.** It peaks at 2.78° while 25° of throw sits unused.
+The obvious explanation is that 15° of stuck aileron is simply too much rolling moment. That explanation is wrong, and the surfaces plot is what gives it away: **the surviving aileron never even tries.** It peaks at 2.78° while 25° of throw sits unused.
 
-15° is well inside the actuator's range, and the fault is physically trimmable — the healthy side only needs to hold +15° for the differential to return to zero. The controller cannot get there, and the reason is structural. At steady state the roll rate `p` is zero and the outer loop's rate command is capped by `p_limit`, so the largest surface deflection this cascade can ever *hold* is `Kp_ph_inner × p_limit = 0.06 × 40 deg/s = 2.40°` — not the 25° actuator limit. Sweeping the jam angle puts the boundary exactly on that prediction:
+15° is well inside the actuator's range, and the fault is physically trimmable — the healthy side only needs to hold +15° for the differential to return to zero. The reason the controller can't get there is the controller itself: at steady state the roll rate `p` is zero and the outer loop's rate command is capped by `p_limit`, so the largest surface deflection this cascade can ever *hold* is `Kp_ph_inner × p_limit = 0.06 × 40 deg/s = 2.40°` — not the 25° actuator limit. Sweeping the jam angle puts the boundary exactly on that prediction:
 
 | hardover | outcome |
 |---|---|
@@ -72,7 +72,7 @@ The obvious explanation is that 15° of stuck aileron is simply too much rolling
 
 Raising the inner gain does not rescue it either: at 0.12 it still departs, and at 0.3–0.6 the aileron rails and it departs *sooner*. A pure-proportional inner rate loop structurally cannot hold a steady offset. Fixing this needs integral action in the inner loop, or explicit fault detection and reallocation — a real design change, not a gain tweak.
 
-## Three cases that look like they should depart, and don't
+## Three more faults, different severities, different surfaces
 
 The two cases above make the core point. The three below test its edges: even a total loss of an entire actuator channel is survivable, as long as the frozen actuators land where trim already needed them and the fault is never a hardover.
 
